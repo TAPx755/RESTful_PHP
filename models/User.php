@@ -7,13 +7,14 @@
  */
 
 require_once __DIR__."/../auth/JWTToken.php";
+require_once __DIR__."/../models/DatabaseObject.php";
 
 class User implements DatabaseObject, JsonSerializable
 {
     private $id;
     private $name;
     private $password;
-    private $salt;
+    private $token;
     private $email;
     private $unlocked;
 
@@ -22,12 +23,12 @@ class User implements DatabaseObject, JsonSerializable
     private $errors;
 
 
-    function __construct($id=0, $name, $password, $salt, $email, $unlocked, $fkPrivilege)
+    function __construct($id=0, $name, $password, $token, $email, $unlocked, $fkPrivilege)
     {
         $this->id=$id;
         $this->name=$name;
         $this->password=$password;
-        $this->salt=$salt;
+        $this->token=$token;
         $this->email=$email;
         $this->unlocked=$unlocked;
         $this->fkPrivilege=$fkPrivilege;
@@ -76,7 +77,7 @@ class User implements DatabaseObject, JsonSerializable
     public function getUserFromEmail()
     {
         $db = Database::connect();
-        $sql = 'SELECT u_ID, u_Email, u_Password, u_Salt FROM tbl_User WHERE u_Email LIKE ?';
+        $sql = 'SELECT u_ID, u_Email, u_Password, u_Token FROM tbl_User WHERE u_Email LIKE ?';
         $stmt = $db->prepare($sql);
         $stmt->execute(array($this->email));
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -87,7 +88,7 @@ class User implements DatabaseObject, JsonSerializable
         }
         else
         {
-            return new User($user['u_ID'], null, $user['u_Password'], $user['u_Salt'], $user['u_Email'],null,null);
+            return new User($user['u_ID'], null, $user['u_Password'], $user['u_Token'], $user['u_Email'],null,null);
         }
     }
     public function checkPassword($userFromDB)
@@ -95,7 +96,7 @@ class User implements DatabaseObject, JsonSerializable
         return password_verify($this->getPassword(), $userFromDB->getPassword());
     }
 
-    public function getToken()
+    public function generateToken()
     {
         $token = array(
           "username" => $this->getEmail(),
@@ -105,12 +106,62 @@ class User implements DatabaseObject, JsonSerializable
         return JWTToken::generateToken($token);
     }
 
+    public function getIdFromToken()
+    {
+        if(JWTToken::parseToken($this->getToken()) != false)
+        {
+            $id = JWTToken::parseToken($this->getToken())->id;
+            return $id;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public function parseToken()
+    {
+        return JWTToken::parseToken($this->getToken());
+    }
+
+    public function saveToken()
+    {
+        $db = Database::connect();
+        $sql = "UPDATE tbl_User SET u_Token = ? WHERE u_ID = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->execute(array($this->getToken(),$this->getId()));
+        Database::disconnect();
+    }
+    public function validateToken()
+    {
+        if(JWTToken::validateToken($this->getToken()))
+        {
+            $db = Database::connect();
+            $sql = "SELECT u_Token FROM tbl_User WHERE u_ID = ?";
+            $stmt = $db->prepare($sql);
+            $stmt->execute(array($this->getId()));
+            $tokenFromDB = $stmt->fetch(PDO::FETCH_ASSOC);
+            Database::disconnect();
+
+            if(strcmp($tokenFromDB, $this->getToken()) == 0)
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+
     public function create()
     {
         $db = Database::connect();
-        $sql = 'INSERT INTO tbl_User (u_Name, u_Password, u_Salt, u_Email, u_Unlocked, FK_Privilege_ID) values (?,?,?,?,?,?)';
+        $sql = 'INSERT INTO tbl_User (u_Name, u_Password, u_Token, u_Email, u_Unlocked, FK_Privilege_ID) values (?,?,?,?,?,?)';
         $stmt = $db->prepare($sql);
-        $stmt->execute(array($this->getName(), $this->getPassword(), $this->getSalt(), $this->getEmail(), $this->getUnlocked(), $this->getFkPrivilege()));
+        $stmt->execute(array($this->getName(), $this->getPassword(), $this->getToken(), $this->getEmail(), $this->getUnlocked(), $this->getFkPrivilege()));
         return $db->lastInsertId();
         Database::disconnect();
     }
@@ -129,7 +180,7 @@ class User implements DatabaseObject, JsonSerializable
         }
         else
         {
-            return new User($user['u_ID'], $user['u_Name'], $user['u_Password'], $user['u_Salt'], $user['u_Email'], $user['u_Unlocked'], $user['FK_Privilege_ID']);
+            return new User($user['u_ID'], $user['u_Name'], $user['u_Password'], $user['u_Token'], $user['u_Email'], $user['u_Unlocked'], $user['FK_Privilege_ID']);
         }
         Database::disconnect();
     }
@@ -153,7 +204,7 @@ class User implements DatabaseObject, JsonSerializable
         {
             foreach ($users as $user)
             {
-                $data[] = new User($user['u_ID'], $user['u_Name'], $user['u_Password'], $user['u_Salt'], $user['u_Email'], $user['u_Unlocked'], $user['FK_Privilege_ID']);
+                $data[] = new User($user['u_ID'], $user['u_Name'], $user['u_Password'], $user['u_Token'], $user['u_Email'], $user['u_Unlocked'], $user['FK_Privilege_ID']);
             }
         }
 
@@ -172,9 +223,9 @@ class User implements DatabaseObject, JsonSerializable
     public function update()
     {
         $db = Database::connect();
-        $sql = 'UPDATE tbl_User SET u_Name = ?, u_Password = ?, u_Salt = ?, u_Email = ?, u_Unlocked = ?, FK_Privilege_ID = ? WHERE u_ID=?';
+        $sql = 'UPDATE tbl_User SET u_Name = ?, u_Password = ?, u_Token = ?, u_Email = ?, u_Unlocked = ?, FK_Privilege_ID = ? WHERE u_ID=?';
         $stmt = $db->prepare($sql);
-        $stmt->execute(array($this->getName(), $this->getPassword(), $this->getPassword(), $this->getSalt(), $this->getUnlocked(), $this->getFkPrivilege(), $this->getId()));
+        $stmt->execute(array($this->getName(), $this->getPassword(), $this->getPassword(), $this->getToken(), $this->getUnlocked(), $this->getFkPrivilege(), $this->getId()));
         Database::disconnect();
     }
 
@@ -229,17 +280,17 @@ class User implements DatabaseObject, JsonSerializable
     /**
      * @return mixed
      */
-    public function getSalt()
+    public function getToken()
     {
-        return $this->salt;
+        return $this->token;
     }
 
     /**
-     * @param mixed $salt
+     * @param mixed $token
      */
-    public function setSalt($salt)
+    public function setToken($token)
     {
-        $this->salt = $salt;
+        $this->token = $token;
     }
 
     /**
@@ -297,7 +348,7 @@ class User implements DatabaseObject, JsonSerializable
           "u_ID" => $this->getId(),
           "u_Name" => $this->getName(),
           "u_Password" => $this->getPassword(),
-            "u_Salt" => $this->getSalt(),
+            "u_Token" => $this->getToken(),
             "u_Email" => $this->getEmail(),
             "u_Unlocked" => $this->getUnlocked(),
             "FK_Privilege_ID" => $this->getFkPrivilege()

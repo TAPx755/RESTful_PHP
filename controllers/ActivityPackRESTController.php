@@ -6,25 +6,37 @@
  * Time: 17:37
  */
 
-require_once "models/ActivityPackage.php";
 require_once "RESTController.php";
+
+require_once __DIR__."/../models/User.php";
+require_once __DIR__."/../models/ActivityPackage.php";
+
 
 class ActivityPackRESTController extends RESTController
 {
     public function handleRequest()
     {
-        switch($this->method)
+        $user = new User(null,null,null,$this->token,null,null,null);
+        $user->setId($user->getIdFromToken());
+
+        if($this->token != null && $user->validateToken())
         {
-            case 'GET': $this->handleGETRequest();
-            break;
-            case 'POST': $this->handlePOSTRequest();
-            break;
-            case 'DELETE': $this->handleDELETERequest();
-            break;
-            case 'PUT': $this->handlePUTRequest();
-            break;
-            default: $this->response('Methode nicht erlaubt', 405);
-            break;
+            switch($this->method)
+            {
+                case 'POST': $this->handlePOSTRequest();
+                    break;
+                case 'PUT': $this->handlePUTRequest();
+                    break;
+                case 'DELETE': $this->handleDELETERequest();
+                    break;
+                case 'GET': $this->handleGETRequest();
+                    break;
+                default : $this->response('Method not allowed', 405);
+            }
+        }
+        else
+        {
+            $this->response('Token not found', 401);
         }
     }
     public function handleGETRequest()

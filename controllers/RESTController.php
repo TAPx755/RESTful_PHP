@@ -35,6 +35,10 @@ abstract class RESTController
      */
     protected $file = Null;
 
+
+    protected $token = Null;
+
+
     /**
      * Constructor: __construct
      * Allow for CORS, assemble and pre-process the data
@@ -44,6 +48,13 @@ abstract class RESTController
         header("Access-Control-Allow-Orgin: *");
         header("Access-Control-Allow-Methods: *");
         header("Content-Type: application/json");
+
+        if(isset(apache_request_headers()['Authorization']))
+        {
+            $this->token = apache_request_headers()['Authorization'];
+            $this->token = str_replace("Bearer", "", $this->token);
+            $this->token = trim($this->token);
+        }
 
         $this->args = isset($_GET['r']) ? explode('/', trim($_GET['r'], '/')) : [];
         if (sizeof($this->args) == 0) {

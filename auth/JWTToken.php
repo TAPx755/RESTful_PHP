@@ -15,7 +15,33 @@ class JWTToken
         $public_key = file_get_contents('keys/public_key.key');
         try
         {
-            $decoded = JWT::decode($jwt, $public_key, array('RS256'));
+            JWT::decode($jwt, $public_key, array('RS256'));
+            return true;
+        }
+        catch(UnexpectedValueException $exception)
+        {
+            return 'Unexpected Value';
+        }
+        catch(SignatureInvalidException $exception)
+        {
+            return 'SignatureInvalid';
+        }
+        catch(BeforeValidException $exception)
+        {
+            return 'BeforeValid';
+        }
+        catch(ExpiredException $exception)
+        {
+            return 'Expired';
+        }
+    }
+
+    public static function parseToken($jwt)
+    {
+        $public_key = file_get_contents('keys/public_key.key');
+        try
+        {
+            return JWT::decode($jwt, $public_key, array('RS256'));
         }
         catch(UnexpectedValueException $exception)
         {
@@ -34,6 +60,7 @@ class JWTToken
             return false;
         }
     }
+
     public static function generateToken($token)
     {
         $secret_key = file_get_contents('keys/private_key.key');

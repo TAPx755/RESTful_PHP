@@ -7,23 +7,30 @@
  */
 
 require_once "RESTController.php";
-require_once  "models/User.php";
+require_once __DIR__."/../models/User.php";
 
 class UserRESTController extends RESTController
 {
     public function handleRequest()
     {
-        switch($this->method)
+        if($this->token != null)
         {
-            case 'POST': $this->handlePOSTRequest();
-            break;
-            case 'PUT': $this->handlePUTRequest();
-            break;
-            case 'DELETE': $this->handleDELETERequest();
-            break;
-            case 'GET': $this->handleGETRequest();
-            break;
-            default : $this->response('Method not allowed', 405);
+            switch($this->method)
+            {
+                case 'POST': $this->handlePOSTRequest();
+                    break;
+                case 'PUT': $this->handlePUTRequest();
+                    break;
+                case 'DELETE': $this->handleDELETERequest();
+                    break;
+                case 'GET': $this->handleGETRequest();
+                    break;
+                default : $this->response('Method not allowed', 405);
+            }
+        }
+        else
+        {
+            $this->response('Token not found', 401);
         }
     }
     public function handleGETRequest()
@@ -73,7 +80,8 @@ class UserRESTController extends RESTController
             {
                 if($loginUser->checkPassword($foundUserDB))
                 {
-
+                    $foundUserDB->setToken($foundUserDB->generateToken());
+                    $foundUserDB->saveToken();
                     $this->response($foundUserDB->getToken(), 200);
                 }
                 else
@@ -93,7 +101,6 @@ class UserRESTController extends RESTController
 
             $user->setName($this->file['u_Name']);
             $user->setPassword(password_hash($this->file['u_Password'], PASSWORD_BCRYPT));
-            $user->setSalt("TODO METHOD");
             $user->setEmail($this->file['u_Email']);
 
             //Default Werte für einen neuen User (Rechte->3 = Gast, Unlocked->False = Gesperrt)
