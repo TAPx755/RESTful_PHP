@@ -6,11 +6,8 @@
  * Time: 17:37
  */
 
+require_once "models/ActivityPackage.php";
 require_once "RESTController.php";
-
-require_once __DIR__."/../models/User.php";
-require_once __DIR__."/../models/ActivityPackage.php";
-
 
 class ActivityPackRESTController extends RESTController
 {
@@ -49,6 +46,13 @@ class ActivityPackRESTController extends RESTController
         else if($this->verb == null && sizeof($this->args) == 1)
         {
             $model = ActivityPackage::get($this->args[0]);
+            $this->response($model);
+        }
+        else if($this->verb == 'user' && sizeof($this->args) == 1)
+        {
+            $user = User::get($this->args[0]);
+            $userID = $user->getId();
+            $model = ActivityPackage::getAll($userID);
             $this->response($model);
         }
         else
