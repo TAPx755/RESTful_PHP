@@ -104,7 +104,7 @@ class UserRESTController extends RESTController
             $user->setEmail($this->file['u_Email']);
 
             //Default Werte für einen neuen User (Rechte->3 = Gast, Unlocked->False = Gesperrt)
-            $user->setUnlocked(false);
+            $user->setUnlocked(0);
             $user->setFkPrivilege(3);
 
             if($user->save())

@@ -108,7 +108,7 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
         }
     }
 
-    public function getAll()
+    public function getAll($userID = null)
     {
 
         // JOIN FÜR WELCHER USER WELCHES AB ANSEHEN KANN$sql = 'SELECT a.ap_name ,acc.a_id, uacc.FK_User_ID, u.u_name from tbl_activitypackage a INNER JOIN tbl_access acc ON a.ap_ID = acc.a_ID INNER JOIN tbl_user_access uacc ON uacc.FK_AccessU_ID = acc.a_ID INNER JOIN tbl_user u ON uacc.FK_User_ID = u.u_ID';
@@ -116,7 +116,12 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
         $apsFin = [];
 
         $db = Database::connect();
-        $sql = 'SELECT * FROM tbl_Activitypackage ORDER BY ap_Date DESC';
+        if($user == null){
+            $sql = 'SELECT * FROM tbl_Activitypackage ORDER BY ap_Date DESC';
+        }
+        else{
+            $sql = 'SELECT * FROM tbl_Activitypackage Inner join tbl_Access a on a.FK_Activitypackage_ID = tbl_Activitypackage.ap_ID Inner join tbl_User_Access ua on ua.FK_AccessU_ID = a.a_ID Where FK_OwnerUser_ID = '+$userID+' OR ua.FK_User_ID = '+$userID+' ORDER BY ap_Date DESC';
+        }
         $stmt = $db->prepare($sql);
         $stmt->execute();
         $aps = $stmt->fetchAll(PDO::FETCH_ASSOC);
