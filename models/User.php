@@ -6,6 +6,8 @@
  * Time: 18:30
  */
 
+require_once __DIR__."/../auth/JWTToken.php";
+
 class User implements DatabaseObject, JsonSerializable
 {
     private $id;
@@ -93,9 +95,14 @@ class User implements DatabaseObject, JsonSerializable
         return password_verify($this->getPassword(), $userFromDB->getPassword());
     }
 
-    public function saveInSession()
+    public function getToken()
     {
-        $_SESSION[$this->getEmail()] = $this->getId();
+        $token = array(
+          "username" => $this->getEmail(),
+          "password" => $this->getPassword(),
+          "id" => $this->getId()
+        );
+        return JWTToken::generateToken($token);
     }
 
     public function create()

@@ -73,9 +73,8 @@ class UserRESTController extends RESTController
             {
                 if($loginUser->checkPassword($foundUserDB))
                 {
-                    $foundUserDB->saveInSession();
 
-                    $this->response($foundUserDB->getId(), 200);
+                    $this->response($foundUserDB->getToken(), 200);
                 }
                 else
                 {
