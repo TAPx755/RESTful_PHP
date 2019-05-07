@@ -13,7 +13,10 @@ class UserRESTController extends RESTController
 {
     public function handleRequest()
     {
-        if($this->token != null)
+        $user = new User(null,null,null,$this->token,null,null,null);
+        $user->setId($user->getIdFromToken());
+
+        if($this->token != null && $user->validateToken())
         {
             switch($this->method)
             {
@@ -27,6 +30,13 @@ class UserRESTController extends RESTController
                     break;
                 default : $this->response('Method not allowed', 405);
             }
+        }
+        else if($this->token == null)
+        {
+           if($this->method == 'POST')
+           {
+               $this->handlePOSTRequest();
+           }
         }
         else
         {
