@@ -234,9 +234,14 @@ class User implements DatabaseObject, JsonSerializable
             $stmt = $db->prepare($sql);
             $stmt->execute(array($this->getId()));
             $tokenFromDB = $stmt->fetch(PDO::FETCH_ASSOC);
+            $tokenFromDB = $tokenFromDB['u_Token'];
             Database::disconnect();
 
-            if(strcmp($tokenFromDB, $this->getToken()) == 0)
+            if($tokenFromDB == null)
+            {
+                return false;
+            }
+            else if(strcmp($tokenFromDB, $this->getToken()) == 0)
             {
                 return true;
             }

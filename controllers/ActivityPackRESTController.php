@@ -48,11 +48,16 @@ class ActivityPackRESTController extends RESTController
             $model = ActivityPackage::get($this->args[0]);
             $this->response($model);
         }
-        else if($this->verb == 'user' && sizeof($this->args) == 1)
+        else if($this->verb == 'user' && sizeof($this->args) == 1) //ap/user/1
         {
             $user = User::get($this->args[0]);
-            $userID = $user->getId();
-            $model = ActivityPackage::getAll($userID);
+            $model = ActivityPackage::getAll($user);
+            $this->response($model);
+        }
+        else if($this->verb == 'user' && sizeof($this->args) == 2) //ap/user/1/Pflastern
+        {
+            $user = User::get($this->args[0]);
+            $model = ActivityPackage::getAll($user, $this->args[1]);
             $this->response($model);
         }
         else
