@@ -42,11 +42,12 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
     public function validate()
     {
         return $this->validateHelper('note', $this->getNote(), 256) &
+            $this->validateHelper("location", $this->getLocation(), 50) &
             $this->validateHelper('name', $this->getTime(), 32) &
-        $this->validateHelper('street', $this->getStreet(), 64) &
-        $this->validateHelper('streetNr', $this->getStreetNr(), 3) &
-        $this->validateHelper('date', $this->getDate(), 10) &
-        $this->validateHelper('time', $this->getTime(), 5);
+            $this->validateHelper('street', $this->getStreet(), 64) &
+            $this->validateHelper('streetNr', $this->getStreetNr(), 3) &
+            $this->validateHelper('date', $this->getDate(), 10) &
+            $this->validateHelper('time', $this->getTime(), 5);
     }
 
     public function save()
@@ -57,7 +58,6 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
             } else {
                 $this->id = $this->create();
             }
-
             return true;
         }
 
@@ -76,7 +76,112 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
             $errors[$label] = $label.' darf nicht leer sein';
             return false;
         }
-        return true;
+        // REGEX FOR NAME
+        if (strcmp($label, "name")){
+           if ($this->checkRegexForName($value,$label) == false){
+               $errors[$label] = $label. " beinhaltet Sonderzeichen";
+               return false;
+           }
+        }
+        //REGEX FOR LOCATION
+        if (strcmp($label, "location")){
+            if ($this->checkRegexForLocation($value, $label)){
+                $errors[$label] = $label. " beinhaltet Sonderzeichen";
+                return false;
+            }
+        }
+        // REGEX FOR NOTE
+        if (strcmp($label, "note")){
+            if ($this->checkRegexForNote($value, $label)){
+                $errors[$label] = $label. " beinhaltet Sonderzeichen";
+                return false;
+            }
+        }
+        // REGEX FOR STREET
+        if (strcmp($label, "street")){
+            if ($this->checkRegexForStreet($value, $label)){
+                $errors[$label] = $label. " beinhaltet Sonderzeichen";
+                return false;
+            }
+        }
+        // REGEX FOR STREET NR
+        if (strcmp($label, "streetNr")){
+           if ($this->checkRegexForStreetNr($value, $label)){
+               $errors[$label] = $label. " beinhaltet Sonderzeichen";
+               return false;
+           }
+        }
+        // REGEX FOR DATE
+        if (strcmp($label, "date")){
+           if ($this->checkRegexForDate($value, $label)){
+               $errors[$label] = $label. " beinhaltet Sonderzeichen";
+               return false;
+           }
+        }
+        // REGEX FOR TIME
+        if (strcmp($label, "name")){
+           if ($this->checkRegexForTime($value, $label)){
+               $errors[$label] = $label. " beinhaltet Sonderzeichen";
+               return false;
+           }
+        }
+    }
+
+    public function checkRegexForName($value){
+        $reg = "#^[ öÖäÄüÜßa-zA-Z0-9_.,-/()+*><]*$#";
+        if (preg_match($reg, $value)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public function checkRegexForLocation($value){
+        $reg = "#^[ öÖäÄüÜßa-zA-Z.,-]*$#";
+        if (preg_match($reg, $value)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public function checkRegexForNote($value){
+        $reg = "#^[ öÖäÄüÜßa-zA-Z0-9_.,-/()+*><&!?\"]*$#";
+        if (preg_match($reg,$value)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public function checkRegexForStreet($value){
+        $reg = "#^[ ßöÖäÄüÜßa-zA-Z]*$#";
+        if (preg_match($reg,$value)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public function checkRegexForStreetNr($value){
+        $reg = "#^[a-z0-9,-]*$#";
+        if (preg_match($reg,$value)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public function checkRegexForDate($value){
+        $reg = "#([12][0-9]{3}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]))#";
+        if (preg_match($reg,$value)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public function checkRegexForTime($value){
+        $reg = "#^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$ #";
+        if (preg_match($reg,$value)){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public function create()
