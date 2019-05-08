@@ -108,23 +108,59 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
         }
     }
 
-    public function getAll($userID = null)
+    public function getAll($user = null, $filter = null)
     {
 
         // JOIN FÜR WELCHER USER WELCHES AB ANSEHEN KANN $sql = 'SELECT a.ap_name ,acc.a_id, uacc.FK_User_ID, u.u_name from tbl_activitypackage a INNER JOIN tbl_access acc ON a.ap_ID = acc.a_ID INNER JOIN tbl_user_access uacc ON uacc.FK_AccessU_ID = acc.a_ID INNER JOIN tbl_user u ON uacc.FK_User_ID = u.u_ID';
-
         $apsFin = [];
+        $aps = [];
 
         $db = Database::connect();
-        if($userID == null){
-            $sql = 'SELECT * FROM tbl_Activitypackage ORDER BY ap_Date DESC';
+
+        if($filter == null)
+        {
+            if($user == null){
+                $sql = 'SELECT * FROM tbl_Activitypackage ORDER BY ap_Date DESC';
+                $stmt = $db->prepare($sql);
+                $stmt->execute();
+            }
+            else{
+                $sql = 'SELECT * FROM tbl_Activitypackage Inner join tbl_Access a on a.FK_Activitypackage_ID = tbl_Activitypackage.ap_ID Inner join tbl_User_Access ua on ua.FK_AccessU_ID = a.a_ID Where FK_OwnerUser_ID = ? OR ua.FK_User_ID = ? ORDER BY ap_Date DESC';
+                $stmt = $db->prepare($sql);
+                $stmt->execute(array($user->getId(), $user->getId()));
+            }
+            $aps = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
-        else{
-            $sql = 'SELECT * FROM tbl_Activitypackage Inner join tbl_Access a on a.FK_Activitypackage_ID = tbl_Activitypackage.ap_ID Inner join tbl_User_Access ua on ua.FK_AccessU_ID = a.a_ID Where FK_OwnerUser_ID = ? OR ua.FK_User_ID = ? ORDER BY ap_Date DESC';
+        else
+        {
+            if($user == null){
+                $sql = 'SELECT * FROM tbl_Activitypackage ORDER BY ap_Date DESC';
+                $stmt = $db->prepare($sql);
+                $stmt->execute();
+            }
+            else {
+                if (preg_match_all('^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}^', $filter) == 1) {
+                    $sql = 'SELECT * FROM tbl_Activitypackage Inner join tbl_Access a on a.FK_Activitypackage_ID = tbl_Activitypackage.ap_ID Inner join tbl_User_Access ua on ua.FK_AccessU_ID = a.a_ID Where (FK_OwnerUser_ID = ? OR ua.FK_User_ID = ?) AND ap_Date LIKE ? ORDER BY ap_Date DESC';
+                    $stmt = $db->prepare($sql);
+                    $stmt->execute(array($user->getId(), $user->getId(), $filter));
+                }
+                else if (preg_match_all('^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}^', $filter) == 2)
+                {
+                    $sql = 'SELECT * FROM tbl_Activitypackage Inner join tbl_Access a on a.FK_Activitypackage_ID = tbl_Activitypackage.ap_ID Inner join tbl_User_Access ua on ua.FK_AccessU_ID = a.a_ID Where (FK_OwnerUser_ID = ? OR ua.FK_User_ID = ?) AND ap_Date BETWEEN ? AND ? ORDER BY ap_Date DESC';
+                    $stmt = $db->prepare($sql);
+                    $date1 = substr($filter, 0, strpos($filter, ","));
+                    $date2 = substr($filter, strpos($filter,",")+1);
+                    $stmt->execute(array($user->getId(), $user->getId(), $date1, $date2));
+                }
+                else
+                {
+                    $sql = 'SELECT * FROM tbl_Activitypackage Inner join tbl_Access a on a.FK_Activitypackage_ID = tbl_Activitypackage.ap_ID Inner join tbl_User_Access ua on ua.FK_AccessU_ID = a.a_ID Where (FK_OwnerUser_ID = ? OR ua.FK_User_ID = ?) AND (ap_Name LIKE ? OR ap_Note LIKE ? OR ap_Location LIKE ? OR ap_Street LIKE ?) ORDER BY ap_Date DESC';
+                    $stmt = $db->prepare($sql);
+                    $stmt->execute(array($user->getId(), $user->getId(), '%'.$filter.'%', '%'.$filter.'%', '%'.$filter.'%', '%'.$filter.'%'));
+                }
+                $aps = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
         }
-        $stmt = $db->prepare($sql);
-        $stmt->execute(array($userID, $userID));
-        $aps = $stmt->fetchAll(PDO::FETCH_ASSOC);
         Database::disconnect();
 
         foreach ($aps as $ap) {
