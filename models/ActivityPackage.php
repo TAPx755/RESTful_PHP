@@ -77,57 +77,55 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
             return false;
         }
         // REGEX FOR NAME
-        if (strcmp($label, "name")){
-           if ($this->checkRegexForName($value,$label) == false){
+        if (strcmp($label, "name") == 0){
+           if ($this->checkRegexForName($value) == false){
                $errors[$label] = $label. " beinhaltet Sonderzeichen";
                return false;
            }
         }
         //REGEX FOR LOCATION
-        if (strcmp($label, "location")){
-            if ($this->checkRegexForLocation($value, $label)){
+        if (strcmp($label, "location") == 0){
+            if ($this->checkRegexForLocation($value) == false){
                 $errors[$label] = $label. " beinhaltet Sonderzeichen";
                 return false;
             }
         }
         // REGEX FOR NOTE
-        if (strcmp($label, "note")){
-            if ($this->checkRegexForNote($value, $label)){
+        if (strcmp($label, "note") == 0){
+            if ($this->checkRegexForNote($value) == false){
                 $errors[$label] = $label. " beinhaltet Sonderzeichen";
                 return false;
             }
         }
         // REGEX FOR STREET
-        if (strcmp($label, "street")){
-            if ($this->checkRegexForStreet($value, $label)){
+        if (strcmp($label, "street") == 0){
+            if ($this->checkRegexForStreet($value) == false){
                 $errors[$label] = $label. " beinhaltet Sonderzeichen";
                 return false;
             }
         }
         // REGEX FOR STREET NR
-        if (strcmp($label, "streetNr")){
-           if ($this->checkRegexForStreetNr($value, $label)){
+        if (strcmp($label, "streetNr") == 0){
+           if ($this->checkRegexForStreetNr($value) == false){
                $errors[$label] = $label. " beinhaltet Sonderzeichen";
                return false;
            }
         }
         // REGEX FOR DATE
-        if (strcmp($label, "date")){
-           if ($this->checkRegexForDate($value, $label)){
+        if (strcmp($label, "date") == 0){
+           if ($this->checkRegexForDate($value) == false){
                $errors[$label] = $label. " beinhaltet Sonderzeichen";
                return false;
            }
         }
         // REGEX FOR TIME
-        if (strcmp($label, "name")){
-           if ($this->checkRegexForTime($value, $label)){
+        if (strcmp($label, "name") == 0){
+           if ($this->checkRegexForTime($value) == false){
                $errors[$label] = $label. " beinhaltet Sonderzeichen";
                return false;
            }
         }
-        else{
-            return true;
-        }
+        return true;
     }
 
     public function checkRegexForName($value){
