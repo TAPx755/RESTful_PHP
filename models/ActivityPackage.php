@@ -77,7 +77,7 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
             return false;
         }
         // REGEX FOR NAME
-        if (strcmp($label, "name")){
+        if (strcmp($label, "name") == 0){
            if ($this->checkRegexForName($value,$label) == false){
                $errors[$label] = $label. " beinhaltet Sonderzeichen";
                return false;

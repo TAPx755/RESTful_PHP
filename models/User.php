@@ -169,7 +169,7 @@ class User implements DatabaseObject, JsonSerializable
         $db = Database::connect();
         $sql = 'SELECT u_ID, u_Email, u_Password, u_Token FROM tbl_User WHERE u_Email LIKE ?';
         $stmt = $db->prepare($sql);
-        $stmt->execute(array($this->email));
+        $stmt->execute(array($this->getEmail()));
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user == null)
@@ -181,8 +181,6 @@ class User implements DatabaseObject, JsonSerializable
             return new User($user['u_ID'], null, $user['u_Password'], $user['u_Token'], $user['u_Email'],null,null);
         }
     }
-
-
 
     public function checkPassword($userFromDB)
     {
