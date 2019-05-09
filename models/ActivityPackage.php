@@ -125,9 +125,7 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
                return false;
            }
         }
-        else{
-            return true;
-        }
+        return true;
     }
 
     public function checkRegexForName($value){
