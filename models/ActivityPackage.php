@@ -145,7 +145,7 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
         }
     }
     public function checkRegexForNote($value){
-        $reg = "#^[ öÖäÄüÜßa-zA-Z0-9_.,-/()+*><&!?\"]*$#";
+        $reg = '#^[ öÖäÄüÜßa-zA-Z0-9_.,-/()+*><&!?\"]*$#';
         if (preg_match($reg,$value)){
             return true;
         }else{
