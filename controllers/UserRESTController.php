@@ -13,8 +13,7 @@ class UserRESTController extends RESTController
 {
     public function handleRequest()
     {
-        $user = new User(null,null,null,$this->token,null,null,null);
-        $user->setId($user->getIdFromToken());
+        $user = new User($this->userId,null,null,$this->token,null,null,null);
 
         if($this->token != null && $user->validateToken())
         {
@@ -74,7 +73,6 @@ class UserRESTController extends RESTController
     }
     public function handlePOSTRequest()
     {
-
         //For login process
         if($this->verb == 'login' && sizeof($this->args) == 0)
         {
@@ -85,6 +83,7 @@ class UserRESTController extends RESTController
             $loginUser->setPassword($this->file['u_Password']);
 
             $foundUserDB = $loginUser->getUserFromEmail();
+
 
             if($foundUserDB != null)
             {

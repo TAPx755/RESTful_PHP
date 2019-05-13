@@ -35,8 +35,17 @@ abstract class RESTController
      */
     protected $file = Null;
 
-
+    /**
+     * Property: JWT Token
+     * Stores the sent token Authorization: Bearer <token>
+     */
     protected $token = Null;
+
+    /**
+     * Property: User ID
+     * Stores the sent user ID for requests
+     */
+    protected $userId = Null;
 
 
     /**
@@ -50,6 +59,11 @@ abstract class RESTController
         header("Access-Control-Allow-Headers: *");
         header("Content-Type: application/json");
 
+        //Lower Case for error avoidance in the array_search method
+        $_GET['r'] = strtolower($_GET['r']);
+
+
+        //Get's the token from the Authorization Header
         if(isset(apache_request_headers()['Authorization']))
         {
             $this->token = apache_request_headers()['Authorization'];
@@ -57,16 +71,27 @@ abstract class RESTController
             $this->token = trim($this->token);
         }
 
+        //For the remaining args
         $this->args = isset($_GET['r']) ? explode('/', trim($_GET['r'], '/')) : [];
         if (sizeof($this->args) == 0) {
             throw new Exception('Invalid request');
         }
 
+        //Get's the user id from the Link for example /user/1
+        $indexId = array_search('user', $this->args, true);
+        $this->userId = $this->args[$indexId+1];
+        if($this->userId == null)
+        {
+            throw new Exception("User ID not found");
+        }
+
+        //Endpoint
         $this->endpoint = array_shift($this->args);
         if (array_key_exists(0, $this->args) && !is_numeric($this->args[0])) {
             $this->verb = array_shift($this->args);
         }
 
+        //Get's the method for the HTTP Request
         $this->method = $_SERVER['REQUEST_METHOD'];
         if ($this->method == 'POST' && array_key_exists('HTTP_X_HTTP_METHOD', $_SERVER)) {
             if ($_SERVER['HTTP_X_HTTP_METHOD'] == 'DELETE') {
@@ -77,6 +102,7 @@ abstract class RESTController
                 throw new Exception("Unexpected Header");
             }
         }
+
 
         switch ($this->method) {
             case 'DELETE':
@@ -119,6 +145,11 @@ abstract class RESTController
         return $clean_input;
     }
 
+
+    /**
+     * @param $code which text will be sent
+     * @return value of the code
+     */
     private function _requestStatus($code)
     {
         $status = array(

@@ -13,8 +13,7 @@ class ActivityPackRESTController extends RESTController
 {
     public function handleRequest()
     {
-        $user = new User(null,null,null,$this->token,null,null,null);
-        $user->setId($user->getIdFromToken());
+        $user = new User($this->userId,null,null,$this->token,null,null,null);
 
         if($this->token != null && $user->validateToken())
         {
