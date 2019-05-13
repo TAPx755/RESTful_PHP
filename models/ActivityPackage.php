@@ -47,16 +47,7 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
             $this->validateHelper('street', $this->getStreet(), 64) &
             $this->validateHelper('streetNr', $this->getStreetNr(), 3) &
             $this->validateHelper('date', $this->getDate(), 10) &
-            $this->validateHelper('time', $this->getTime(), 5) &
-            //REGEX
-            $this->checkRegexForName("name", $this->getName())&
-            $this->checkRegexForNote("note", $this->getNote()) &
-            $this->checkRegexForLocation("location", $this->getLocation()) &
-            $this->checkRegexForStreet("street", $this->getStreet()) &
-            $this->checkRegexForStreetNr("streetNr", $this->getStreetNr()) &
-            $this->checkRegexForDate("date", $this->getDate()) &
-            $this->checkRegexForTime("time", $this->getTime());
-
+            $this->validateHelper('time', $this->getTime(), 5);
     }
 
     public function save()
@@ -85,120 +76,113 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
             $errors[$label] = $label.' darf nicht leer sein';
             return false;
         }
-        /*
         // REGEX FOR NAME
         if (strcmp($label, "name") == 0){
-           if ($this->checkRegexForName($value) == false){
+           if ($this->checkRegexForName($value,$label) == false){
                $errors[$label] = $label. " beinhaltet Sonderzeichen";
                return false;
            }
         }
         //REGEX FOR LOCATION
-        if (strcmp($label, "location") == 0){
-            if ($this->checkRegexForLocation($value) == false){
+        if (strcmp($label, "location")){
+            if ($this->checkRegexForLocation($value, $label)){
                 $errors[$label] = $label. " beinhaltet Sonderzeichen";
                 return false;
             }
         }
         // REGEX FOR NOTE
-        if (strcmp($label, "note") == 0){
-            if ($this->checkRegexForNote($value) == false){
+        if (strcmp($label, "note")){
+            if ($this->checkRegexForNote($value, $label)){
                 $errors[$label] = $label. " beinhaltet Sonderzeichen";
                 return false;
             }
         }
         // REGEX FOR STREET
-        if (strcmp($label, "street") == 0){
-            if ($this->checkRegexForStreet($value) == false){
+        if (strcmp($label, "street")){
+            if ($this->checkRegexForStreet($value, $label)){
                 $errors[$label] = $label. " beinhaltet Sonderzeichen";
                 return false;
             }
         }
         // REGEX FOR STREET NR
-        if (strcmp($label, "streetNr") == 0){
-           if ($this->checkRegexForStreetNr($value) == false){
+        if (strcmp($label, "streetNr")){
+           if ($this->checkRegexForStreetNr($value, $label)){
                $errors[$label] = $label. " beinhaltet Sonderzeichen";
                return false;
            }
         }
         // REGEX FOR DATE
-        if (strcmp($label, "date") == 0){
-           if ($this->checkRegexForDate($value) == false){
+        if (strcmp($label, "date")){
+           if ($this->checkRegexForDate($value, $label)){
                $errors[$label] = $label. " beinhaltet Sonderzeichen";
                return false;
            }
         }
         // REGEX FOR TIME
-        if (strcmp($label, "name") == 0){
-           if ($this->checkRegexForTime($value) == false){
+        if (strcmp($label, "name")){
+           if ($this->checkRegexForTime($value, $label)){
                $errors[$label] = $label. " beinhaltet Sonderzeichen";
                return false;
            }
         }
-        */
-        return true;
+        else{
+            return true;
+        }
     }
 
-    public function checkRegexForName($label, $value){
+    public function checkRegexForName($value){
         $reg = "#^[ öÖäÄüÜßa-zA-Z0-9_.,-/()+*><]*$#";
         if (preg_match($reg, $value)){
             return true;
         }else{
-            $errors[$label] = $label. " beinhaltet Sonderzeichen";
             return false;
         }
     }
-    public function checkRegexForLocation($label, $value){
+    public function checkRegexForLocation($value){
         $reg = "#^[ öÖäÄüÜßa-zA-Z.,-]*$#";
         if (preg_match($reg, $value)){
             return true;
         }else{
-            $errors[$label] = $label. " beinhaltet Sonderzeichen";
             return false;
         }
     }
-    public function checkRegexForNote($label, $value){
+    public function checkRegexForNote($value){
         $reg = "#^[ öÖäÄüÜßa-zA-Z0-9_.,-/()+*><&!?\"]*$#";
         if (preg_match($reg,$value)){
             return true;
         }else{
-            $errors[$label] = $label. " beinhaltet Sonderzeichen";
             return false;
         }
     }
-    public function checkRegexForStreet($label, $value){
+    public function checkRegexForStreet($value){
         $reg = "#^[ ßöÖäÄüÜßa-zA-Z]*$#";
         if (preg_match($reg,$value)){
             return true;
         }else{
-            $errors[$label] = $label. " beinhaltet Sonderzeichen";
             return false;
         }
     }
-    public function checkRegexForStreetNr($label, $value){
+    public function checkRegexForStreetNr($value){
         $reg = "#^[a-z0-9,-]*$#";
         if (preg_match($reg,$value)){
             return true;
         }else{
-            $errors[$label] = $label. " beinhaltet Sonderzeichen";
             return false;
         }
     }
-    public function checkRegexForDate($label, $value){
+    public function checkRegexForDate($value){
         $reg = "#([12][0-9]{3}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]))#";
         if (preg_match($reg,$value)){
             return true;
         }else{
-            $errors[$label] = $label. " beinhaltet Sonderzeichen";
             return false;
         }
     }
-    public function checkRegexForTime($label, $value){
+    public function checkRegexForTime($value){
         $reg = "#^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$ #";
         if (preg_match($reg,$value)){
             return true;
         }else{
-            $errors[$label] = $label. " beinhaltet Sonderzeichen";
             return false;
         }
     }
