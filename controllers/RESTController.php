@@ -84,6 +84,11 @@ abstract class RESTController
         {
             throw new Exception("User ID not found");
         }
+        else
+        {
+            unset($this->args[$indexId]);
+            unset($this->args[$indexId+1]); //We don't need these 2 arguments anymore cause of the $userId variable
+        }
 
         //Endpoint
         $this->endpoint = array_shift($this->args);
