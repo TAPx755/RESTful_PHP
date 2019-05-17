@@ -1,5 +1,10 @@
 <?php
+require "models/ActivityPackage.php";
 
-$filter = '2023-06-17,0293-02-02';
+$ap = new ActivityPackage(2, "hallo", "hallo", "hallo", 25, "2019-03-03", "00:00", 2, 0, "arzl");
 
-echo preg_match_all('^([0-9]{4}-[0-9]{1,2}-[0-9]{1,2})^', $filter);
+$ap->save();
+
+
+
+

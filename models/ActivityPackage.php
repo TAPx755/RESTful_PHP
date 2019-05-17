@@ -53,13 +53,17 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
     public function save()
     {
         if ($this->validate()) {
+            echo "save";
+            /*
             if ($this->id != null && $this->id > 0) {
                 $this->update();
             } else {
                 $this->id = $this->create();
             }
+            */
             return true;
         }
+        echo " nosave";
 
         return false;
     }
@@ -69,11 +73,13 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
         if(strlen($value) > $length)
         {
             $errors[$label] = $label.' darf die Zeichen von '.$length.' nicht überschreiten';
+            echo"maxlänge fail";
             return false;
         }
         if(strlen($value) == 0)
         {
             $errors[$label] = $label.' darf nicht leer sein';
+            echo "minlänge failed";
             return false;
         }
         return true;
@@ -81,64 +87,72 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
 
     public function validateName($label, $value){
         $reg = "#^[ öÖäÄüÜßa-zA-Z0-9_.,-/()+*><]*$#";
-        if (preg_match($reg, $value) & $this->validateHelper($label, $value, $value.length())){
+        if (preg_match($reg, $value) & $this->validateHelper($label, $value, 256)){
             return true;
         }else{
             $errors[$label] = $label. " beinhaltet Sonderzeichen";
+            echo "validate name failed";
+            var_dump($errors);
             return false;
         }
     }
     public function validateLocation($label, $value){
         $reg = "#^[ öÖäÄüÜßa-zA-Z.,-]*$#";
-        if (preg_match($reg, $value) & $this->validateHelper($label, $value, $value.length())){
+        if (preg_match($reg, $value) & $this->validateHelper($label, $value, 128)){
             return true;
         }else{
             $errors[$label] = $label. " beinhaltet Sonderzeichen";
+            echo "validate location failed";
             return false;
         }
     }
     public function validateNote($label, $value){
         $reg = "#^[ öÖäÄüÜßa-zA-Z0-9_.,-/()+*><&!?\"]*$#";
-        if (preg_match($reg,$value) & $this->validateHelper($label, $value, $value.length())){
+        if (preg_match($reg,$value) & $this->validateHelper($label, $value, 256)){
             return true;
         }else{
             $errors[$label] = $label. " beinhaltet Sonderzeichen";
+            echo "validate note failed";
             return false;
         }
     }
     public function validateStreet($label, $value){
         $reg = "#^[ ßöÖäÄüÜßa-zA-Z]*$#";
-        if (preg_match($reg,$value) & $this->validateHelper($label, $value, $value.length())){
+        if (preg_match($reg,$value) & $this->validateHelper($label, $value, 256)){
             return true;
         }else{
             $errors[$label] = $label. " beinhaltet Sonderzeichen";
+            echo "validate street failed";
             return false;
         }
     }
     public function validateStreetNr($label, $value){
         $reg = "#^[a-z0-9,-]*$#";
-        if (preg_match($reg,$value) & $this->validateHelper($label, $value, $value.length())){
+        if (preg_match($reg,$value) & $this->validateHelper($label, $value, 10 )){
             return true;
         }else{
             $errors[$label] = $label. " beinhaltet Sonderzeichen";
+            echo "validate streetnr failed";
             return false;
         }
     }
     public function validateDate($label, $value){
         $reg = "#([12][0-9]{3}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]))#";
-        if (preg_match($reg,$value) & $this->validateHelper($label, $value, $value.length())){
+        if (preg_match($reg,$value) & $this->validateHelper($label, $value, 10)){
             return true;
         }else{
             $errors[$label] = $label. " beinhaltet Sonderzeichen";
+            echo "validate date failed ";
             return false;
         }
     }
     public function validateTime($label, $value){
-        $reg = "#^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$ #";
-        if (preg_match($reg,$value) & $this->validateHelper($label, $value, $value.length())){
+        $reg = "#^(?:2[0-3]|[01][0-9]):[0-5][0-9]$#";
+        if (preg_match($reg,$value) & $this->validateHelper($label, $value, 10)){
             return true;
         }else{
             $errors[$label] = $label. " beinhaltet Sonderzeichen";
+            echo "validate time failed";
             return false;
         }
     }
