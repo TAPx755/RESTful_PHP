@@ -37,7 +37,7 @@ class ActivityPackRESTController extends RESTController
     }
     public function handleGETRequest()
     {
-        if ($this->verb == null && sizeof($this->args) == 0)
+        /*if ($this->verb == null && sizeof($this->args) == 0)
         {
             $model = ActivityPackage::getAll();
             $this->response($model);
@@ -58,11 +58,21 @@ class ActivityPackRESTController extends RESTController
             $user = User::get($this->args[0]);
             $model = ActivityPackage::getAll($user, $this->args[1]);
             $this->response($model);
+        }*/
+
+        if ($this->userId == null && sizeof($this->args) == 1)
+        {
+            $model = ActivityPackage::get($this->args[0], $this->userId);
+            $this->response($model);
         }
+
         else
         {
             $this->response('Bad Request', 400);
         }
+
+        $this->response($this->args, 200);
+
     }
 
     public function handlePOSTRequest()

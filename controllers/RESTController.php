@@ -78,17 +78,27 @@ abstract class RESTController
         }
 
         //Get's the user id from the Link for example /user/1
-        $indexId = array_search('user', $this->args, true);
-        $this->userId = $this->args[$indexId+1];
-        if($this->userId == null)
+
+        if(array_search('user', $this->args, true) === FALSE)
         {
-            throw new Exception("User ID not found");
+            throw new Exception("User not in URI");
         }
         else
         {
-            unset($this->args[$indexId]);
-            unset($this->args[$indexId+1]); //We don't need these 2 arguments anymore cause of the $userId variable
+            $indexId = array_search('user', $this->args, true);
+            $this->userId = $this->args[$indexId+1];
+            if($this->userId == null)
+            {
+                throw new Exception("User ID not found");
+            }
+            else
+            {
+                unset($this->args[$indexId]);
+                unset($this->args[$indexId+1]); //We don't need these 2 arguments anymore cause of the $userId variable
+            }
         }
+
+
 
         //Endpoint
         $this->endpoint = array_shift($this->args);
