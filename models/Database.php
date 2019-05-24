@@ -2,10 +2,10 @@
 
 class Database
 {
-    private static $dbName = 'dbGamper';
-    private static $dbHost = '10.211.55.6';
-    private static $dbUsername = 'API_DIPL';
-    private static $dbUserPassword = 'hallo123';
+    private static $dbName = 'ezjob';
+    private static $dbHost = 'localhost';
+    private static $dbUsername = 'root';
+    private static $dbUserPassword = '';
 
     private static $conn = null;
 

@@ -8,7 +8,7 @@
 
 require_once __DIR__."/../auth/JWTToken.php";
 require_once __DIR__."/../models/DatabaseObject.php";
-require_once __DIR__."/../models/Privilege.php";
+//require_once __DIR__."/../models/Privilege.php";
 
 
 class User implements DatabaseObject, JsonSerializable
@@ -40,25 +40,30 @@ class User implements DatabaseObject, JsonSerializable
 
     public function save()
     {
-            if($this->getId() != null && $this->getId() > 0)
-            {
+        if ($this->validate()) {
+            echo "save";
+
+            /*
+            if ($this->getId() != null && $this->getId() > 0) {
                 $this->update();
                 return true;
-            }
-            else
-            {
+            } else {
                 $this->setId($this->create());
                 return true;
             }
-            return false;
+            return false;*/
+        }else{
+            echo "nosave";
+        }
+
     }
 
 
     public function validate()
     {
-        return $this->validateHelper('name', $this->getName(), 30) &
-            $this->validateHelper('password', $this->getPassword(), 32) &
-            $this->validateHelper('email', $this->getEmail(), 30);
+        return $this->validateName("name", $this->getName())&
+                $this->validateEmail("email", $this->getEmail())&
+                $this->validatePassword("passwort", $this->getPassword());
     }
 
     public function validateHelper($label, $value, $length)
@@ -71,9 +76,71 @@ class User implements DatabaseObject, JsonSerializable
         if(strlen($value) == 0)
         {
             $errors[$label] = $label.' darf nicht leer sein';
+            var_dump($errors);
             return false;
         }
         return true;
+    }
+
+    public function validateName($label, $value){
+        $reg = "#^[A-Za-z.,-öÖäÄüÜß]*$#";
+        if (!preg_match($reg, $value)){
+            $errors[$label] = $label. " darf keine Sonderzeichen enthalten";
+            var_dump($errors);
+            return false;
+        }
+        else if (!$this->validateHelper($label, $value, 256)){
+            return false;
+        }
+        /*
+        else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 256)){
+            return true;
+        }*/
+        else{
+            return true;
+        }
+    }
+
+    public function validatePassword($label, $value){
+        // TODO: PASSWORD POLICY ?
+        if (strlen($value) <= "8") {
+            $errors[$label] = "Dein Passwort muss mindestens 8 Zeichen lang sein!";
+            var_dump($errors);
+            return false;
+        }
+        elseif(!preg_match("#[0-9]+#",$value)) {
+            $errors[$label] = "Dein Passwort muss mindestens eine Zahl beinhalten!";
+            var_dump($errors);
+            return false;
+        }
+        elseif(!preg_match("#[A-Z]+#",$value)) {
+            $errors[$label] = "Dein Passwort muss mindestens einen Großbuchstaben beinhalten!";
+            var_dump($errors);
+            return false;
+        }
+        elseif(!preg_match("#[a-z]+#",$value)) {
+            $errors[$label] = "Dein Passwort muss mindestens einen Kleinbuchstaben beinhalten!";
+            var_dump($errors);
+        }
+        else {
+            $errors[$label] = "Bitte überprüfen Sie, ob Sie Ihr Passwort eingegeben haben!";
+            var_dump($errors);
+        }
+
+    }
+
+    public function validateEmail($label, $value){
+        if(filter_var($value, FILTER_VALIDATE_EMAIL)){
+            return true;
+        }
+        else if (!$this->validateHelper($label, $value,256)){
+            return false;
+        }
+        else{
+            $errors[$label] = $label. " ist keine gültige E-Mail Adresse";
+            return false;
+        }
+
     }
 
     public function getPrivilege() //FK Privilege
