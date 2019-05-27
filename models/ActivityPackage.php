@@ -53,18 +53,13 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
     public function save()
     {
         if ($this->validate()) {
-            echo "save";
-            /*
             if ($this->id != null && $this->id > 0) {
                 $this->update();
             } else {
                 $this->id = $this->create();
             }
-            */
             return true;
         }
-        echo " nosave";
-
         return false;
     }
 
@@ -94,16 +89,12 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
         else if (!$this->validateHelper($label, $value, 256)){
             return false;
         }
-
-        else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 256)){
+        /*else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 256)){
+            return true;
+        }*/
+        else{
             return true;
         }
-        /*else{
-            $errors[$label] = $label. " beinhaltet Sonderzeichen";
-            echo "validate name failed";
-            var_dump($errors);
-            return false;
-        }*/
     }
     public function validateLocation($label, $value){
         $reg = "#^[ öÖäÄüÜßa-zA-Z.,-]*$#";
@@ -115,8 +106,10 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
         else if (!$this->validateHelper($label, $value, 256)){
             return false;
         }
-
-        else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 128)){
+        /*else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 128)){
+            return true;
+        }*/
+        else{
             return true;
         }
     }
@@ -130,8 +123,10 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
         else if (!$this->validateHelper($label, $value, 256)){
             return false;
         }
-
-        else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 256)){
+        /*else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 256)){
+            return true;
+        }*/
+        else{
             return true;
         }
     }
@@ -145,8 +140,10 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
         else if (!$this->validateHelper($label, $value, 256)){
             return false;
         }
-
-        else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 256)){
+        /*else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 256)){
+            return true;
+        }*/
+        else{
             return true;
         }
     }
@@ -160,8 +157,10 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
         else if (!$this->validateHelper($label, $value, 256)){
             return false;
         }
-
-        else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 10)){
+        /*else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 10)){
+            return true;
+        }*/
+        else{
             return true;
         }
     }
@@ -175,10 +174,10 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
         else if (!$this->validateHelper($label, $value, 256)){
             return false;
         }
-
-        else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 10)){
+        /*else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 10)){
             return true;
-        }
+        }*/
+        return true;
     }
     public function validateTime($label, $value){
         $reg = "#^(?:2[0-3]|[01][0-9]):[0-5][0-9]$#";
@@ -190,10 +189,10 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
         else if (!$this->validateHelper($label, $value, 256)){
             return false;
         }
-
-        else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 10)){
+        /*else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 10)){
             return true;
-        }
+        }*/
+        return true;
     }
 
     public function create()

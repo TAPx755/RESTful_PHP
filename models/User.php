@@ -41,9 +41,6 @@ class User implements DatabaseObject, JsonSerializable
     public function save()
     {
         if ($this->validate()) {
-            echo "save";
-
-            /*
             if ($this->getId() != null && $this->getId() > 0) {
                 $this->update();
                 return true;
@@ -51,13 +48,9 @@ class User implements DatabaseObject, JsonSerializable
                 $this->setId($this->create());
                 return true;
             }
-            return false;*/
-        }else{
-            echo "nosave";
         }
-
+        return false;
     }
-
 
     public function validate()
     {
@@ -102,7 +95,6 @@ class User implements DatabaseObject, JsonSerializable
     }
 
     public function validatePassword($label, $value){
-        // TODO: PASSWORD POLICY ?
         if (strlen($value) <= "8") {
             $errors[$label] = "Dein Passwort muss mindestens 8 Zeichen lang sein!";
             var_dump($errors);
@@ -121,10 +113,10 @@ class User implements DatabaseObject, JsonSerializable
         elseif(!preg_match("#[a-z]+#",$value)) {
             $errors[$label] = "Dein Passwort muss mindestens einen Kleinbuchstaben beinhalten!";
             var_dump($errors);
+            return false;
         }
         else {
-            $errors[$label] = "Bitte überprüfen Sie, ob Sie Ihr Passwort eingegeben haben!";
-            var_dump($errors);
+            return true;
         }
 
     }
