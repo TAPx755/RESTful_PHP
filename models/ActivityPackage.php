@@ -205,12 +205,12 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
         Database::disconnect();
     }
 
-    public static function get($id)
+    public static function get($apId, $userId)
     {
         $db = Database::connect();
-        $sql = 'SELECT * FROM tbl_Activitypackage WHERE ap_ID =?';
+        $sql = 'SELECT * FROM tbl_Activitypackage Inner join tbl_Access a on a.FK_Activitypackage_ID = tbl_Activitypackage.ap_ID Inner join tbl_User_Access ua on ua.FK_AccessU_ID = a.a_ID Where ( FK_OwnerUser_ID = 1 OR ua.FK_User_ID = 1 ) AND ap_ID = 1 ORDER BY ap_Date DESC';
         $stmt = $db->prepare($sql);
-        $stmt->execute(array($id));
+        $stmt->execute(array($userId,$userId,$apId));
         $ap = $stmt->fetch(PDO::FETCH_ASSOC);
         Database::disconnect();
 
