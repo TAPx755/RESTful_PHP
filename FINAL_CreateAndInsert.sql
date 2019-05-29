@@ -29,16 +29,16 @@ CREATE TABLE tbl_User (
 
 -- INSERTING DATA FOR TBL_USER --
 
-insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (1, 'Skell', 'vLj3lttoeh', '', 'sdahle0@nifty.com', 'Admin');
-insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (2, 'Layton', '3sohYhG64ha', '', 'lstonuary1@shinystat.com', 'Normal');
-insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (3, 'Tuckie', 'JA4fddY6z4', '', 'talfonzo2@admin.ch', 'Guest');
-insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (4, 'Norry', '7zuEDYhn', '', 'nmcelroy3@deviantart.com','Normal');
-insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (5, 'Alva', 'DkwvIme', '', 'apollington4@cyberchimps.com', 'Guest');
-insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (6, 'Dilly', '8T0oKnz0', '', 'ddecarolis5@tamu.edu', 'Normal');
-insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (7, 'Geneva', 'JYTlkXOv', '', 'gaynsley6@opera.com', 'Admin');
-insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (8, 'Ottilie', '2Orw8Iy5Fv', '', 'obliss7@tinyurl.com', 'Guest');
-insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (9, 'Dal', '2GhUhh9xu2x', '', 'dbrevetor8@usatoday.com', 'Admin');
-insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (10, 'Stacy', 'uKRYzFBuP', '', 'sgrewcock9@trellian.com', 'Guest');
+insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (1, 'Skell', '$2y$10$kVmbUXcdb34k2sO0CA.bgOkCVN.//dargYGZiNJ0ANCInFKs4J67m', '', 'sdahle0@nifty.com', 'Admin'); -- test
+insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (2, 'Layton', '$2y$10$WWxSCNVA5pbiSpu/1Ujcy.00mu.m7vyC48GWF8T2M7gy07wOyyku2', '', 'lstonuary1@shinystat.com', 'Normal'); -- testitest
+insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (3, 'Tuckie', '$2y$10$wdI2fH4G1Kifqfj7268f8.UiJlap/DElR4hFQ8qvPKivd3RmHCuqe', '', 'talfonzo2@admin.ch', 'Guest');  -- patti_ist_mürrisch
+insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (4, 'Norry', '$2y$10$t6kpZk1ejeRPoK31rGC0iuKnC8O/D0E9DfRe9iMhh97ec2o4evIjK', '', 'nmcelroy3@deviantart.com','Normal'); -- test2
+insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (5, 'Alva', '$2y$10$KaFfw8smSKts.wNHRNcvz.jG.0CgXUqdrHVzHMbaaIrUlS7IXs1PC', '', 'apollington4@cyberchimps.com', 'Guest'); -- test3
+insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (6, 'Dilly', '$$2y$10$iGLVSsdzJ./KZ.zuGOCPi.QXRtDnxSiMOBNKtPVD9IilSlH4cG1mq', '', 'ddecarolis5@tamu.edu', 'Normal'); -- Passwort4!
+insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (7, 'Geneva', '$2y$10$sVCDM/eL35p2zQL4Fw.vkOTF7NlPSWK3PmkQRKZo3qQjIq/IbR/0S', '', 'gaynsley6@opera.com', 'Admin'); -- asdasd1234
+insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (8, 'Ottilie', '$2y$10$y5d4zH5aBBdtOh.1UQdbduY2Wx6D1gxcfI/l5AuSrxO57KOIeMRr6', '', 'obliss7@tinyurl.com', 'Guest'); -- Deine_Muddi_
+insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (9, 'Dal', '$2y$10$LKSQvYiWJ0ODvEIlR/BarOWyTaPlXBdBJX.ChNKVSU.rVhrITcNGe', '', 'dbrevetor8@usatoday.com', 'Admin'); -- Mamacita
+insert into tbl_User (u_ID, u_Name, u_Password, u_Token, u_Email, u_Privilege) values (10, 'Stacy', '$2y$10$96b4NuPSfhRVEsP6Ir7VaOpZlx21D407LOIL9AIEoq3wFYv0ZO3sK', '', 'sgrewcock9@trellian.com', 'Guest'); -- leerer hash (wortwörtlich gemeint smh)
 
 
 CREATE TABLE tbl_Activitypackage (
