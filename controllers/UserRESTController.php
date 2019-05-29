@@ -93,7 +93,7 @@ class UserRESTController extends RESTController
     }
     public function handleDELETERequest($user)
     {
-        if(sizeof($this->args) == 1 && $user->getPrivilege == 'Admin')
+        if(sizeof($this->args) == 1 && $user->getPrivilege() == 'Admin')
         {
             User::delete($this->args[0]);
             $this->response('OK', 200);
@@ -161,11 +161,11 @@ class UserRESTController extends RESTController
     }
     public function handlePUTRequest($user)
     {
-       if(sizeof($this->args) == 1 && ($user->getPrivilege() == 'Admin' && $user->getId() == $this->args[0])) {
+       if(sizeof($this->args) == 1 && ($user->getPrivilege() == 'Admin' || $user->getId() == $this->args[0])) {
            $user = User::get($this->args[0]);
 
            $user->setName($this->file['u_Name']);
-           $user->setPassword($this->file['u_Password']);
+           $user->setPassword(password_hash($this->file['u_Password'], PASSWORD_BCRYPT));
            $user->setEmail($this->file['u_Email']);
            $user->setPrivilege($this->file['u_Privilege']);
 

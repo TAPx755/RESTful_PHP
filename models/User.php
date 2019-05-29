@@ -200,9 +200,9 @@ class User implements DatabaseObject, JsonSerializable
     public function update()
     {
         $db = Database::connect();
-        $sql = 'UPDATE tbl_User SET u_Name = ?, u_Password = ?, u_Token = ?, u_Email = ?, FK_Privilege_ID = ? WHERE u_ID=?';
+        $sql = 'UPDATE tbl_User SET u_Name = ?, u_Password = ?, u_Token = ?, u_Email = ?, u_Privilege = ? WHERE u_ID=?';
         $stmt = $db->prepare($sql);
-        $stmt->execute(array($this->getName(), $this->getPassword(), $this->getPassword(), $this->getToken(), $this->getPrivilege(), $this->getId()));
+        $stmt->execute(array($this->getName(), $this->getPassword(), $this->getToken(), $this->getEmail(), $this->getPrivilege(), $this->getId()));
         Database::disconnect();
     }
 

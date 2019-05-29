@@ -34,6 +34,8 @@ print_r($lol);*/
     //echo JWTToken::validateToken($jwtToken);
     //print_r(JWTToken::parseToken($jwtToken)->id);
 
+
+
 $db = Database::connect();
 $sql = 'SELECT u_Token FROM tbl_User WHERE u_ID = ?';
 $stmt = $db->prepare($sql);
