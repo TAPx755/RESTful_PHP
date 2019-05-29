@@ -36,6 +36,10 @@ abstract class RESTController
     protected $file = Null;
 
 
+    /**
+     * Property: token
+     * Stores the token sent by the user via the Authorization: Bearer Header
+     */
     protected $token = '';
 
 
@@ -47,6 +51,7 @@ abstract class RESTController
     {
         header("Access-Control-Allow-Orgin: *");
         header("Access-Control-Allow-Methods: *");
+        header("Access-Control-Allow-Headers: *");
         header("Content-Type: application/json");
 
         $this->args = isset($_GET['r']) ? explode('/', trim($_GET['r'], '/')) : [];

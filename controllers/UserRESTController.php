@@ -88,7 +88,7 @@ class UserRESTController extends RESTController
         }
         else
         {
-            $this->response($user->getPrivilege(), 401);
+            $this->response('Not Authorized', 401);
         }
     }
     public function handleDELETERequest($user)

@@ -13,93 +13,97 @@ class ActivityPackRESTController extends RESTController
 {
     public function handleRequest()
     {
+        if($this->token != null)
+        {
+            $user = new User(null,null,null,null,null,null);
+            $user->setToken($this->token);
+            $id = $user->getIdFromToken();
+            $privilege = $user->getPrivilegeFromToken();
 
-        try
-        {
-            $user = new User($this->getUserIdURI(),null,null,$this->token,null,null);
-        }
-        catch(Exception $userNotFound)
-        {
-            $this->response($userNotFound, 400);
-        }
-
-        if($this->token != null && $user->validateToken())
-        {
-            switch($this->method)
+            if($id == false)
             {
-                case 'POST': $this->handlePOSTRequest();
-                    break;
-                case 'PUT': $this->handlePUTRequest();
-                    break;
-                case 'DELETE': $this->handleDELETERequest();
-                    break;
-                case 'GET': $this->handleGETRequest();
-                    break;
-                default : $this->response('Method not allowed', 405);
+                $this->response("User not found", 401);
+            }
+            if($privilege == false)
+            {
+                $this->response("Privilege not found", 401);
+            }
+
+            if($user->validateToken())
+            {
+                switch($this->method)
+                {
+                    case 'PUT': $this->handlePUTRequest($user);
+                        break;
+                    case 'DELETE': $this->handleDELETERequest($user);
+                        break;
+                    case 'GET': $this->handleGETRequest($user);
+                        break;
+                    default : $this->response('Method not allowed', 405);
+                }
+            }
+            else
+            {
+                $this->response("Token invalid", 401);
             }
         }
-        else
-        {
-            $this->response('Token not found', 401);
-        }
     }
-    public function handleGETRequest()
+    public function handleGETRequest($user)
     {
-        if ($this->verb == null && sizeof($this->args) == 0)
+        if (sizeof($this->args) == 0 && $user->getPrivilege() == 'Admin')
         {
             $model = ActivityPackage::getAll();
             $this->response($model);
         }
-        else if($this->verb == null && sizeof($this->args) == 1)
+        else if(sizeof($this->args) == 1 && ($user->getPrivilege() == 'Admin' || $user->getId() == $this->args[0]))
         {
             $model = ActivityPackage::get($this->args[0]);
             $this->response($model);
         }
-        else if($this->userId != null && sizeof($this->args) == 0) //ap/user/1
+        else if(sizeof($this->args) == 0 && $user->getPrivilege() != 'Guest') //ap/user/1
         {
-            $user = User::get($this->args[0]);
+            //$user = User::get($this->args[0]);
             $model = ActivityPackage::getAll($user);
             $this->response($model);
         }
-        else if($this->verb == 'user' && sizeof($this->args) == 2) //ap/user/1/Pflastern
+        else if(($this->verb = 'search' && sizeof($this->args) == 1) && $user->getPrivilige() != 'Guest') //ap/user/1/Pflastern
         {
-            $user = User::get($this->args[0]);
+            //$user = User::get($this->args[0]);
             $model = ActivityPackage::getAll($user, $this->args[1]);
             $this->response($model);
         }
 
         else
         {
-            $this->response('Bad Request', 400);
+            $this->response('Not Authorized', 401);
         }
-
-        $this->response($this->args, 200);
-
     }
 
-    public function handlePOSTRequest()
+    public function handlePOSTRequest($user)
     {
-        $model = new ActivityPackage(null, '', '', '', '','','', null,'', '');
-
-        $model->setNote($this->file['ap_Note']);
-        $model->setName($this->file['ap_Name']);
-        $model->setLocation($this->file['ap_Location']);
-        $model->setStreet($this->file['ap_Street']);
-        $model->setStreetNr($this->file['ap_StreetNr']);
-        $model->setDate($this->file['ap_Date']);
-        $model->setTime($this->file['ap_Time']);
-        $model->setFkOwner($this->file['FK_OwnerUser_ID']);
-        $model->setDone($this->file['ap_Done']);
-
-        if($model->save())
+        if($user->getPrivilege() != 'Guest')
         {
-            $this->response('OK', 201);
-        }
-        else
-        {
-            $this->response($model->getErrors(), 400);
-        }
+            $model = new ActivityPackage(null, '', '', '', '','','', null,'', '');
 
+            $model->setNote($this->file['ap_Note']);
+            $model->setName($this->file['ap_Name']);
+            $model->setLocation($this->file['ap_Location']);
+            $model->setStreet($this->file['ap_Street']);
+            $model->setStreetNr($this->file['ap_StreetNr']);
+            $model->setDate($this->file['ap_Date']);
+            $model->setTime($this->file['ap_Time']);
+            $model->setFkOwner($this->file['FK_OwnerUser_ID']);
+            $model->setDone($this->file['ap_Done']);
+
+            if($model->save())
+            {
+                $this->response('OK', 201);
+            }
+            else
+            {
+                $this->response($model->getErrors(), 400);
+            }
+        }
     }
 
     /*
@@ -109,7 +113,7 @@ class ActivityPackRESTController extends RESTController
      */
     public function handlePUTRequest()
     {
-
+        //WAIT FOR ACCESS
         if($this->verb == null && sizeof($this->args) == 1)
         {
             $model = ActivityPackage::get($this->args[0]);
@@ -139,6 +143,7 @@ class ActivityPackRESTController extends RESTController
 
     public function handleDELETERequest()
     {
+        //WAIT FOR ACCESS
         if($this->verb == null && sizeof($this->args) == 1)
         {
             ActivityPackage::delete($this->args[0]);
