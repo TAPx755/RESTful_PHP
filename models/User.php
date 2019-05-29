@@ -8,7 +8,6 @@
 
 require_once __DIR__."/../auth/JWTToken.php";
 require_once __DIR__."/../models/DatabaseObject.php";
-//require_once __DIR__."/../models/Privilege.php";
 
 
 class User implements DatabaseObject, JsonSerializable
@@ -18,22 +17,20 @@ class User implements DatabaseObject, JsonSerializable
     private $password;
     private $token;
     private $email;
-    private $unlocked;
 
-    private $fkPrivilege;
+    private $privilege;
 
     private $errors;
 
 
-    function __construct($id=0, $name, $password, $token, $email, $unlocked, $fkPrivilege)
+    function __construct($id=0, $name, $password, $token, $email, $privilege='Guest')
     {
         $this->id=$id;
         $this->name=$name;
         $this->password=$password;
         $this->token=$token;
         $this->email=$email;
-        $this->unlocked=$unlocked;
-        $this->fkPrivilege=$fkPrivilege;
+        $this->privilege=$privilege;
 
         $this->errors = [];
     }
@@ -135,24 +132,12 @@ class User implements DatabaseObject, JsonSerializable
 
     }
 
-    public function getPrivilege() //FK Privilege
-    {
-        $db = Database::connect();
-        $sql = 'SELECT p.p_ID, p.p_Description, p.p_Name, p.p_Read, p.p_Write, p.p_GrantUser, p.p_DeleteUser, u.u_Id, u.u_Name FROM tbl_privilege p INNER JOIN tbl_User u on u.u_ID = p.p_ID WHERE u_ID = ?';
-        $stmt = $db->prepare($sql);
-        $stmt->execute(array($this->getId()));
-        $privilege = $stmt->fetch(PDO::FETCH_ASSOC);
-        Database::disconnect();
-
-        return new Privilege($privilege['p_ID'], $privilege['p_Name'], $privilege['p_Description'], $privilege['p_Read'], $privilege['p_Write'], $privilege['p_GrantUser'], $privilege['p_DeleteUser']);
-    }
-
     public function create()
     {
         $db = Database::connect();
-        $sql = 'INSERT INTO tbl_User (u_Name, u_Password, u_Token, u_Email, u_Unlocked, FK_Privilege_ID) values (?,?,?,?,?,?)';
+        $sql = 'INSERT INTO tbl_User (u_Name, u_Password, u_Token, u_Email, u_Privilege) values (?,?,?,?,?)';
         $stmt = $db->prepare($sql);
-        $stmt->execute(array($this->getName(), $this->getPassword(), $this->getToken(), $this->getEmail(), $this->getUnlocked(), $this->getFkPrivilege()));
+        $stmt->execute(array($this->getName(), $this->getPassword(), $this->getToken(), $this->getEmail(), $this->getPrivilege()));
         return $db->lastInsertId();
         Database::disconnect();
     }
@@ -171,8 +156,7 @@ class User implements DatabaseObject, JsonSerializable
         }
         else
         {
-            $tmpUser = new User($user['u_ID'], $user['u_Name'], $user['u_Password'], $user['u_Token'], $user['u_Email'], $user['u_Unlocked'], null);
-            $tmpUser->setFkPrivilege($tmpUser->getPrivilege());
+            $tmpUser = new User($user['u_ID'], $user['u_Name'], $user['u_Password'], $user['u_Token'], $user['u_Email'], $user['u_Privilege']);
             return $tmpUser;
         }
         Database::disconnect();
@@ -197,7 +181,7 @@ class User implements DatabaseObject, JsonSerializable
         {
             foreach ($users as $user)
             {
-                $data[] = new User($user['u_ID'], $user['u_Name'], $user['u_Password'], $user['u_Token'], $user['u_Email'], $user['u_Unlocked'], $user['FK_Privilege_ID']);
+                $data[] = new User($user['u_ID'], $user['u_Name'], $user['u_Password'], $user['u_Token'], $user['u_Email'], $user['u_Privilege']);
             }
         }
 
@@ -216,9 +200,9 @@ class User implements DatabaseObject, JsonSerializable
     public function update()
     {
         $db = Database::connect();
-        $sql = 'UPDATE tbl_User SET u_Name = ?, u_Password = ?, u_Token = ?, u_Email = ?, u_Unlocked = ?, FK_Privilege_ID = ? WHERE u_ID=?';
+        $sql = 'UPDATE tbl_User SET u_Name = ?, u_Password = ?, u_Token = ?, u_Email = ?, FK_Privilege_ID = ? WHERE u_ID=?';
         $stmt = $db->prepare($sql);
-        $stmt->execute(array($this->getName(), $this->getPassword(), $this->getPassword(), $this->getToken(), $this->getUnlocked(), $this->getFkPrivilege(), $this->getId()));
+        $stmt->execute(array($this->getName(), $this->getPassword(), $this->getPassword(), $this->getToken(), $this->getPrivilege(), $this->getId()));
         Database::disconnect();
     }
 
@@ -226,7 +210,7 @@ class User implements DatabaseObject, JsonSerializable
     public function getUserFromEmail()
     {
         $db = Database::connect();
-        $sql = 'SELECT u_ID, u_Email, u_Password, u_Token FROM tbl_User WHERE u_Email LIKE ?';
+        $sql = 'SELECT u_ID, u_Email, u_Password, u_Token, u_Privilege FROM tbl_User WHERE u_Email LIKE ?';
         $stmt = $db->prepare($sql);
         $stmt->execute(array($this->getEmail()));
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -237,7 +221,7 @@ class User implements DatabaseObject, JsonSerializable
         }
         else
         {
-            return new User($user['u_ID'], null, $user['u_Password'], $user['u_Token'], $user['u_Email'],null,null);
+            return new User($user['u_ID'], null, $user['u_Password'], $user['u_Token'], $user['u_Email'],$user['u_Privilege']);
         }
     }
 
@@ -251,7 +235,8 @@ class User implements DatabaseObject, JsonSerializable
         $token = array(
             "username" => $this->getEmail(),
             "password" => $this->getPassword(),
-            "id" => $this->getId()
+            "id" => $this->getId(),
+            "privilege" => $this->getPrivilege()
         );
         return JWTToken::generateToken($token);
     }
@@ -260,8 +245,20 @@ class User implements DatabaseObject, JsonSerializable
     {
         if(JWTToken::parseToken($this->getToken()) != false)
         {
-            $id = JWTToken::parseToken($this->getToken())->id;
-            return $id;
+            $this->id = JWTToken::parseToken($this->getToken())->id;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public function getPrivilegeFromToken()
+    {
+        if(JWTToken::parseToken($this->getToken()) != false)
+        {
+            $this->privilege = JWTToken::parseToken($this->getToken())->privilege;
+            return true;
         }
         else
         {
@@ -287,18 +284,18 @@ class User implements DatabaseObject, JsonSerializable
         if(JWTToken::validateToken($this->getToken()))
         {
             $db = Database::connect();
-            $sql = "SELECT u_Token FROM tbl_User WHERE u_ID = ?";
+            $sql = 'SELECT u_Token FROM tbl_User WHERE u_ID = ?';
             $stmt = $db->prepare($sql);
             $stmt->execute(array($this->getId()));
             $tokenFromDB = $stmt->fetch(PDO::FETCH_ASSOC);
-            $tokenFromDB = $tokenFromDB['u_Token'];
+            $token = $tokenFromDB['u_Token'];
             Database::disconnect();
 
-            if($tokenFromDB == null)
+            if($token == null)
             {
                 return false;
             }
-            else if(strcmp($tokenFromDB, $this->getToken()) == 0)
+            else if(strcmp($token, $this->getToken()) == 0)
             {
                 return true;
             }
@@ -393,33 +390,17 @@ class User implements DatabaseObject, JsonSerializable
     /**
      * @return mixed
      */
-    public function getUnlocked()
+    public function getPrivilege()
     {
-        return $this->unlocked;
+        return $this->privilege;
     }
 
     /**
-     * @param mixed $unlocked
+     * @param mixed $privilege
      */
-    public function setUnlocked($unlocked)
+    public function setPrivilege($privilege)
     {
-        $this->unlocked = $unlocked;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFkPrivilege()
-    {
-        return $this->fkPrivilege;
-    }
-
-    /**
-     * @param mixed $fkPrivilege
-     */
-    public function setFkPrivilege($fkPrivilege)
-    {
-        $this->fkPrivilege = $fkPrivilege;
+        $this->privilege = $privilege;
     }
 
 
@@ -431,15 +412,7 @@ class User implements DatabaseObject, JsonSerializable
           "u_Password" => $this->getPassword(),
             "u_Token" => $this->getToken(),
             "u_Email" => $this->getEmail(),
-            "u_Unlocked" => $this->getUnlocked(),
-            "FK_Privilege_ID" => [
-                "p_Name" => $this->getFkPrivilege()->getName(),
-                "p_Description" => $this->getFKPrivilege()->getDescription(),
-                "p_Read" => $this->getFkPrivilege()->getRead(),
-                "p_Write" => $this->getFkPrivilege()->getWrite(),
-                "p_GrantUser" => $this->getFkPrivilege()->getGrantUser(),
-                "p_DeleteUser" => $this->getFkPrivilege()->getDeleteUser()
-            ]
+            "u_Privilege" => $this->getPrivilege()
         ];
     }
 

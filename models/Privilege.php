@@ -37,6 +37,22 @@ class Privilege implements JsonSerializable
         $this->deleteUser = $deleteUser;
     }
 
+    public static function getPrivilege($userId) //FK Privilege
+    {
+        $db = Database::connect();
+        $sql = 'SELECT p.p_ID, p.p_Description, p.p_Name, p.p_Read, p.p_Write, p.p_GrantUser, p.p_DeleteUser, u.u_Id, u.u_Name FROM tbl_privilege p INNER JOIN tbl_User u on u.FK_Privilege_ID= p.p_ID WHERE u_ID = ?';
+        $stmt = $db->prepare($sql);
+        $stmt->execute(array($userId));
+        $privilege = $stmt->fetch(PDO::FETCH_ASSOC);
+        Database::disconnect();
+        if ($privilege == null) {
+            return null;
+        } else {
+            return new Privilege($privilege['p_ID'], $privilege['p_Name'], $privilege['p_Description'], $privilege['p_Read'], $privilege['p_Write'], $privilege['p_GrantUser'], $privilege['p_DeleteUser']);
+        }
+    }
+
+
     public function getId()
     {
         return $this->id;

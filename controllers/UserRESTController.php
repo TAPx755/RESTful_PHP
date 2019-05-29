@@ -7,61 +7,93 @@
  */
 
 require_once "RESTController.php";
+//include __DIR__."/RESTController.php";
 require_once __DIR__."/../models/User.php";
 
 class UserRESTController extends RESTController
 {
+    public function __construct()
+    {
+        try
+        {
+            parent::__construct();
+        }
+        catch(Exception $e)
+        {
+            echo $e;
+        }
+    }
+
     public function handleRequest()
     {
-        $user = new User($this->userId,null,null,$this->token,null,null,null);
 
-        if($this->token != null && $user->validateToken())
+        if($this->token == null)
         {
-            switch($this->method)
+            if($this->method == 'POST')
             {
-                case 'POST': $this->handlePOSTRequest();
-                    break;
-                case 'PUT': $this->handlePUTRequest();
-                    break;
-                case 'DELETE': $this->handleDELETERequest();
-                    break;
-                case 'GET': $this->handleGETRequest();
-                    break;
-                default : $this->response('Method not allowed', 405);
+                $this->handlePOSTRequest();
             }
-        }
-        else if($this->token == null)
-        {
-           if($this->method == 'POST')
-           {
-               $this->handlePOSTRequest();
-           }
+            else
+            {
+                $this->response("Only POST allowed without Token!", 401);
+            }
         }
         else
         {
-            $this->response('Token not found', 401);
+            $user = new User(null,null,null,null,null,null);
+            $user->setToken($this->token);
+            $id = $user->getIdFromToken();
+            $privilege = $user->getPrivilegeFromToken();
+
+            if($id == false)
+            {
+                $this->response("User not found", 401);
+            }
+            if($privilege == false)
+            {
+                $this->response("Privilege not found", 401);
+            }
+
+            if($user->validateToken())
+            {
+                switch($this->method)
+                {
+                    case 'PUT': $this->handlePUTRequest($user);
+                        break;
+                    case 'DELETE': $this->handleDELETERequest($user);
+                        break;
+                    case 'GET': $this->handleGETRequest($user);
+                        break;
+                    default : $this->response('Method not allowed', 405);
+                }
+            }
+            else
+            {
+                $this->response("Token invalid", 401);
+            }
         }
     }
-    public function handleGETRequest()
+    public function handleGETRequest($user)
     {
-        if($this->verb == null && sizeof($this->args) == 0)
+
+        if(sizeof($this->args) == 0 && $user->getPrivilege() == 'Admin')
         {
             $model = User::getAll();
             $this->response($model, 200);
         }
-        else if($this->verb == null && sizeof($this->args) > 0)
+        if(sizeof($this->args) == 1 && ($user->getPrivilege() == 'Admin' && $user->getId() == $this->args[0]))
         {
             $model = User::get($this->args[0]);
             $this->response($model, 200);
         }
         else
         {
-            $this->response('Bad request', 400);
+            $this->response($user->getPrivilege(), 401);
         }
     }
-    public function handleDELETERequest()
+    public function handleDELETERequest($user)
     {
-        if($this->verb == null && sizeof($this->args) == 1)
+        if(sizeof($this->args) == 1 && $user->getPrivilege == 'Admin')
         {
             User::delete($this->args[0]);
             $this->response('OK', 200);
@@ -77,7 +109,7 @@ class UserRESTController extends RESTController
         if($this->verb == 'login' && sizeof($this->args) == 0)
         {
 
-            $loginUser = new User(null,null,null,null,null,null,null);
+            $loginUser = new User(null,null,null,null,null,null);
 
             $loginUser->setEmail($this->file['u_Email']);
             $loginUser->setPassword($this->file['u_Password']);
@@ -106,15 +138,12 @@ class UserRESTController extends RESTController
         //For register process
         else if($this->verb == null && sizeof($this->args) == 0)
         {
-            $user = new User(null,null,null,null,null,null,null);
+            $user = new User(null,null,null,null,null, null);
 
             $user->setName($this->file['u_Name']);
             $user->setPassword(password_hash($this->file['u_Password'], PASSWORD_BCRYPT));
             $user->setEmail($this->file['u_Email']);
-
-            //Default Werte für einen neuen User (Rechte->3 = Gast, Unlocked->False = Gesperrt)
-            $user->setUnlocked(0);
-            $user->setFkPrivilege(3);
+            $user->setPrivilege('Guest');
 
             if($user->save())
             {
@@ -130,26 +159,19 @@ class UserRESTController extends RESTController
             $this->response('Bad Request', 400);
         }
     }
-    public function handlePUTRequest()
+    public function handlePUTRequest($user)
     {
-       if($this->verb == null && sizeof($this->args)==1)
-       {
+       if(sizeof($this->args) == 1 && ($user->getPrivilege() == 'Admin' && $user->getId() == $this->args[0])) {
            $user = User::get($this->args[0]);
-
 
            $user->setName($this->file['u_Name']);
            $user->setPassword($this->file['u_Password']);
-           $user->setSalt("TODO METHOD");
            $user->setEmail($this->file['u_Email']);
-           $user->setUnlocked($this->file['u_Unlocked']);
-           $user->setFkPrivilege($this->file['FK_Privilege_ID']);
+           $user->setPrivilege($this->file['u_Privilege']);
 
-           if($user->save())
-           {
+           if ($user->save()) {
                $this->response('OK', 200);
-           }
-           else
-           {
+           } else {
                $this->response($user->getErrors(), 400);
            }
        }

@@ -13,7 +13,15 @@ class ActivityPackRESTController extends RESTController
 {
     public function handleRequest()
     {
-        $user = new User($this->userId,null,null,$this->token,null,null,null);
+
+        try
+        {
+            $user = new User($this->getUserIdURI(),null,null,$this->token,null,null);
+        }
+        catch(Exception $userNotFound)
+        {
+            $this->response($userNotFound, 400);
+        }
 
         if($this->token != null && $user->validateToken())
         {
@@ -37,7 +45,7 @@ class ActivityPackRESTController extends RESTController
     }
     public function handleGETRequest()
     {
-        /*if ($this->verb == null && sizeof($this->args) == 0)
+        if ($this->verb == null && sizeof($this->args) == 0)
         {
             $model = ActivityPackage::getAll();
             $this->response($model);
@@ -47,7 +55,7 @@ class ActivityPackRESTController extends RESTController
             $model = ActivityPackage::get($this->args[0]);
             $this->response($model);
         }
-        else if($this->verb == 'user' && sizeof($this->args) == 1) //ap/user/1
+        else if($this->userId != null && sizeof($this->args) == 0) //ap/user/1
         {
             $user = User::get($this->args[0]);
             $model = ActivityPackage::getAll($user);
@@ -57,12 +65,6 @@ class ActivityPackRESTController extends RESTController
         {
             $user = User::get($this->args[0]);
             $model = ActivityPackage::getAll($user, $this->args[1]);
-            $this->response($model);
-        }*/
-
-        if ($this->userId == null && sizeof($this->args) == 1)
-        {
-            $model = ActivityPackage::get($this->args[0], $this->userId);
             $this->response($model);
         }
 

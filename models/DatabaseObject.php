@@ -11,7 +11,7 @@ require_once "Database.php";
 interface DatabaseObject
 {
     public function create();
-    public static function get();
+    public static function get($id);
     public function getAll();
     public static function delete($id);
     public function update();
