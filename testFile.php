@@ -1,10 +1,12 @@
 <?php
 require "models/ActivityPackage.php";
 
-
 //include "models/Database.php";
 include "auth/JWTToken.php";
 
+require_once 'controllers/AccessController.php';
+print_r((new AccessController(1)));
+die();
 
     /*$token = array(
         "username" => 'pat@tsn.at',

@@ -169,32 +169,32 @@ CREATE TABLE tbl_Access (
 
 -- INSERTING DATA FOR TBL_ACCESS
 
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (1, 16);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (2, 16);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (3, 13);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (4, 8);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (5, 14);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (6, 1);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (7, 14);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (8, 5);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (9, 8);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (10, 7);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (11, 15);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (12, 4);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (13, 16);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (14, 2);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (15, 11);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (16, 9);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (17, 6);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (18, 9);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (19, 18);
-insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (20, 9);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (1, 1);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (2, 2);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (3, 3);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (4, 4);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (5, 5);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (6, 6);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (7, 7);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (8, 8);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (9, 9);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (10, 10);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (11, 11);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (12, 12);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (13, 13);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (14, 14);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (15, 15);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (16, 16);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (17, 17);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (18, 18);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (19, 19);
+insert into tbl_Access (a_ID, FK_Activitypackage_ID) values (20, 20);
 
 CREATE TABLE tbl_Notification (
 	n_ID int NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	n_Done boolean NULL,
 	FK_AccessN_ID int NULL,
-	
+
     	CONSTRAINT FK_AccessN FOREIGN KEY (FK_AccessN_ID) REFERENCES tbl_Access (a_ID) ON DELETE CASCADE
 );
 
@@ -226,40 +226,53 @@ CREATE TABLE tbl_User_Access(
 	FK_AccessU_ID int NULL,
 	CONSTRAINT FK_User FOREIGN KEY (FK_User_ID) REFERENCES tbl_User(u_ID),
 	CONSTRAINT FK_AccessU FOREIGN KEY (FK_AccessU_ID) REFERENCES tbl_Access(a_ID) ON DELETE CASCADE
-	
+
 );
 
 -- INSERTING DATA FOR TBL_USER_ACCESS
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (8, 4);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (5, 14);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (10, 11);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (6, 8);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (6, 13);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (2, 18);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (1, 10);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (1, 2);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (5, 2);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (10, 6);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (3, 11);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (6, 17);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (3, 11);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (1, 15);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (9, 20);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (3, 4);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (7, 17);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (1, 1);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (2, 1);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (3, 1);
+
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (2, 2);
 insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (3, 2);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (10, 9);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (10, 7);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (1, 7);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (3, 12);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (10, 5);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (7, 16);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (6, 1);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (9, 8);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (1, 6);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (6, 11);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (9, 13);
-insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (4, 12);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (4, 2);
+
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (3, 3);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (4, 3);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (5, 3);
+
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (4, 4);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (5, 4);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (6, 4);
+
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (5, 5);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (7, 5);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (8, 5);
+
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (6, 6);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (2, 6);
+
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (7, 7);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (5, 7);
+
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (8, 8);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (6, 8);
+
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (9, 9);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (8, 9);
+
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (10, 10);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (1, 11);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (2, 12);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (3, 13);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (4, 14);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (5, 15);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (6, 16);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (7, 17);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (8, 18);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (9, 19);
+insert into tbl_User_Access (FK_User_ID, FK_AccessU_ID) values (10, 20);
 
 CREATE TABLE tbl_Archive_Activitypackage (
 	ap_archive_ID int NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -283,7 +296,7 @@ CREATE EVENT moveOldActivitypackagesToArchive
       BEGIN
       INSERT INTO tbl_Archive_Activitypackage (ap_archive_ID, ap_archive_Name, ap_archive_Location, ap_archive_Street,ap_archive_StreetNr,ap_archive_Note,ap_archive_Date,ap_archive_Time,ap_archive_Done,ap_archive_owner)
 
-      SELECT 
+      SELECT
       a.ap_ID,
       a.ap_Name,
       a.ap_Location,
@@ -296,13 +309,13 @@ CREATE EVENT moveOldActivitypackagesToArchive
       u.u_Email
       FROM tbl_Activitypackage a INNER JOIN tbl_User u ON u.u_ID = a.FK_OwnerUser_ID
       WHERE ap_Date > (CURDATE() + INTERVAL 2 YEAR);
-      
+
       UPDATE tbl_Activitypackage SET FK_OwnerUser_ID = NULL WHERE ap_Date > (CURDATE() + INTERVAL 2 YEAR);
-      
+
       SET FOREIGN_KEY_CHECKS=0;
       DELETE FROM tbl_Activitypackage WHERE FK_OwnerUser_ID IS NULL;
       SET FOREIGN_KEY_CHECKS=1;
-      
+
       END |
 
 DELIMITER ;

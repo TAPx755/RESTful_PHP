@@ -16,17 +16,27 @@ class UserAccess implements DatabaseObject, JsonSerializable
         $this->u_id = $u_id;
     }
 
+    public function getAll()
+    {
+        // TODO: Implement getAll() method.
+    }
+
+    public function jsonSerialize()
+    {
+        // TODO: Implement jsonSerialize() method.
+    }
+
+
     // CRUD Operations
 
-    public static function getAll($id)
+    public static function get($id)
     {
         $data = [];
         $db = Database::connect();
         $sql = 'SELECT * FROM tbl_User_Access WHERE FK_AccessU_ID = ?;';
         $stmt = $db->prepare($sql);
         $stmt->execute(array($id));
-        $objs = $stmt->fetch(PDO::FETCH_ASSOC);
-
+        $objs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if ($objs == null) {
             return null;
         } else {
@@ -41,7 +51,7 @@ class UserAccess implements DatabaseObject, JsonSerializable
     static public function delete($id)
     {
         $db = Database::connect();
-        $sql = 'DELETE FROM tbl_User_Access Where FK_AcceesU_ID = ?;';
+        $sql = 'DELETE FROM tbl_User_Access Where FK_AccessU_ID = ?;';
         $stmt = $db->prepare($sql);
         $stmt->execute(array($id));
         Database::disconnect();

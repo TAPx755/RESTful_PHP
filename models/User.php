@@ -73,7 +73,7 @@ class User implements DatabaseObject, JsonSerializable
     }
 
     public function validateName($label, $value){
-        $reg = "#^[A-Za-z.,-öÖäÄüÜß]*$#";
+        $reg = "#^[A-Za-z.,-öÖäÄüÜß]+( [A-Za-z.,-öÖäÄüÜß]+)*$#";
         if (!preg_match($reg, $value)){
             $errors[$label] = $label. " darf keine Sonderzeichen enthalten";
             var_dump($errors);

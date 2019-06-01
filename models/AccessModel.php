@@ -6,7 +6,7 @@
  * Time: 21:09
  */
 
-class AccessModel
+class AccessModel implements DatabaseObject, JsonSerializable
 {
     private $id;
     private $ap_id;
@@ -21,6 +21,17 @@ class AccessModel
         $this->id = $id;
         $this->ap_id = $ap_id;
     }
+
+    public function getAll()
+    {
+        // TODO: Implement getAll() method.
+    }
+
+    public function jsonSerialize()
+    {
+        // TODO: Implement jsonSerialize() method.
+    }
+
 
     // CRUD Operations
 
@@ -59,7 +70,24 @@ class AccessModel
         if ($obj == null) {
             return null;
         } else {
-            $data = new Access($obj['a_ID'], $obj['FK_Activitypackage_ID']);
+            $data = new AccessModel($obj['a_ID'], $obj['FK_Activitypackage_ID']);
+            echo($data);
+        }
+        Database::disconnect();
+        return $data;
+    }
+
+    public static function getAccessFromApId($id)
+    {
+        $db = Database::connect();
+        $sql = 'SELECT * FROM tbl_Access WHERE FK_Activitypackage_ID = ?;';
+        $stmt = $db->prepare($sql);
+        $stmt->execute(array($id));
+        $obj = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($obj == null) {
+            return null;
+        } else {
+            $data = new AccessModel($obj['a_ID'], $obj['FK_Activitypackage_ID']);
         }
         Database::disconnect();
         return $data;
