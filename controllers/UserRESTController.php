@@ -81,7 +81,12 @@ class UserRESTController extends RESTController
             $model = User::getAll();
             $this->response($model, 200);
         }
-        if(sizeof($this->args) == 1 && ($user->getPrivilege() == 'Admin' && $user->getId() == $this->args[0]))
+        else if(sizeof($this->args) == 1 && ($user->getPrivilege() == 'Normal' && $user->getId() == $this->args[0]))
+        {
+            $model = User::get($this->args[0]);
+            $this->response($model, 200);
+        }
+        else if(sizeof($this->args) == 1 && $user->getPrivilege() == 'Admin')
         {
             $model = User::get($this->args[0]);
             $this->response($model, 200);

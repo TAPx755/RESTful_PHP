@@ -76,7 +76,6 @@ class ActivityPackRESTController extends RESTController
             $model = ActivityPackage::getAll($user, $this->args[1]);
             $this->response($model);
         }
-
         else
         {
             $this->response('Not Authorized', 401);
