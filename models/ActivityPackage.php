@@ -493,7 +493,7 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
             "ap_Date" => $this->getDate(),
             "ap_Time" =>$this->getTime(),
             "ap_Done" =>$this->getDone(),
-            "ap_OwnerUser" => $this->getFkOwner()
+            "FK_OwnerUser_ID" => $this->getFkOwner()
         ];
     }
 

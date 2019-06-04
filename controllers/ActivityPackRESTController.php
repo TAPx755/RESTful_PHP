@@ -23,10 +23,12 @@ class ActivityPackRESTController extends RESTController
             if($id == false)
             {
                 $this->response("User not found", 401);
+                die();
             }
             if($privilege == false)
             {
                 $this->response("Privilege not found", 401);
+                die();
             }
 
             if($user->validateToken())
@@ -38,6 +40,8 @@ class ActivityPackRESTController extends RESTController
                     case 'DELETE': $this->handleDELETERequest($user);
                         break;
                     case 'GET': $this->handleGETRequest($user);
+                        break;
+                    case 'POST': $this->handlePOSTRequest($user);
                         break;
                     default : $this->response('Method not allowed', 405);
                 }
@@ -55,7 +59,7 @@ class ActivityPackRESTController extends RESTController
             $model = ActivityPackage::getAll();
             $this->response($model);
         }
-        else if(sizeof($this->args) == 1 && ($user->getPrivilege() == 'Admin' || $user->getId() == $this->args[0]))
+        else if(sizeof($this->args) == 1 && ($user->getPrivilege() == 'Admin'))
         {
             $model = ActivityPackage::get($this->args[0]);
             $this->response($model);
