@@ -39,6 +39,8 @@ class ActivityPackRESTController extends RESTController
                         break;
                     case 'GET': $this->handleGETRequest($user);
                         break;
+                    case 'POST': $this->handlePOSTRequest($user);
+                        break;
                     default : $this->response('Method not allowed', 405);
                 }
             }
