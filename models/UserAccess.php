@@ -29,13 +29,20 @@ class UserAccess implements DatabaseObject, JsonSerializable
 
     // CRUD Operations
 
-    public static function get($id)
+    public static function get($id, $user_id = null)
     {
         $data = [];
         $db = Database::connect();
-        $sql = 'SELECT * FROM tbl_User_Access WHERE FK_AccessU_ID = ?;';
-        $stmt = $db->prepare($sql);
-        $stmt->execute(array($id));
+        if($user_id == null){
+            $sql = 'SELECT * FROM tbl_User_Access WHERE FK_AccessU_ID = ?;';
+            $stmt = $db->prepare($sql);
+            $stmt->execute(array($id));
+        }
+        else{
+            $sql = 'SELECT * FROM tbl_User_Access WHERE FK_User_ID = ?;';
+            $stmt = $db->prepare($sql);
+            $stmt->execute(array($user_id));
+        }
         $objs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if ($objs == null) {
             return null;

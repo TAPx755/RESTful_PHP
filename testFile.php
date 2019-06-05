@@ -5,7 +5,9 @@ require "models/ActivityPackage.php";
 include "auth/JWTToken.php";
 
 require_once 'controllers/AccessController.php';
-print_r((new AccessController(2)));
+print_r((new AccessController())->handleUserRequest(2));
+echo "<br>";
+print_r((new AccessController())->handleAktivitypackageRequest(1));
 die();
 
     /*$token = array(

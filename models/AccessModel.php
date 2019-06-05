@@ -71,7 +71,6 @@ class AccessModel implements DatabaseObject, JsonSerializable
             return null;
         } else {
             $data = new AccessModel($obj['a_ID'], $obj['FK_Activitypackage_ID']);
-            echo($data);
         }
         Database::disconnect();
         return $data;
