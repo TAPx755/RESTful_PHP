@@ -10,7 +10,7 @@ require_once "models/UserAccess.php";
 require_once "models/AccessModel.php";
 require_once "models/User.php";
 
-class AccessController
+class AccessMerge implements JsonSerializable
 {
     private $ap_id;
     private $access;
@@ -40,11 +40,38 @@ class AccessController
             return $this;
     }
     public function handleAktivitypackageRequest($ap_id){
-        $this->ap_id = $ap_id;
+        $this->ap_id = ActivityPackage::get($ap_id);
         $this->access = AccessModel::getAccessFromApId($ap_id);
         $this->useraccess = UserAccess::get($this->access->getId());
         $this->users = $this->parseUserFromArray($this->useraccess);
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'Activitypackage' => $this->arrayToJson($this->getApId()),
+            'Access' =>  $this->arrayToJson($this->getAccess()),
+            'UserAccess' => $this->arrayToJson($this->getUseraccess()),
+            'User' => $this->arrayToJson($this->getUsers()),
+        ];
+    }
+
+    private function arrayToJson($array){
+        if(is_array($array)){
+            try{
+                $data = [];
+                foreach ($array as $obj){
+                    $data[] = $obj->jsonSerialize();
+                }
+                return $data;
+            }catch (Exception $ex){
+                return null;
+            }
+        }
+        else{
+            return $array->jsonSerialize();
+        }
     }
 
     private function parseUserFromArray($array){
@@ -147,6 +174,5 @@ class AccessController
     {
         $this->users = $users;
     }
-
 
 }

@@ -4,10 +4,13 @@ require "models/ActivityPackage.php";
 //include "models/Database.php";
 include "auth/JWTToken.php";
 
-require_once 'controllers/AccessController.php';
-print_r((new AccessController())->handleUserRequest(2));
+require_once 'models/AccessMerge.php';
+$user = new AccessMerge();
+$user->handleUserRequest(2);
+print_r($user->jsonSerialize());
 echo "<br>";
-print_r((new AccessController())->handleAktivitypackageRequest(1));
+$user->handleAktivitypackageRequest(1);
+print_r($user->jsonSerialize());
 die();
 
     /*$token = array(

@@ -23,7 +23,10 @@ class UserAccess implements DatabaseObject, JsonSerializable
 
     public function jsonSerialize()
     {
-        // TODO: Implement jsonSerialize() method.
+        return [
+            "FK_AccessU_ID" => $this->getAId(),
+            "FK_User_ID" => $this->getUId(),
+        ];
     }
 
 
@@ -63,11 +66,18 @@ class UserAccess implements DatabaseObject, JsonSerializable
         $stmt->execute(array($id));
         Database::disconnect();
     }
+    static public function deleteUser($a_id, $u_id){
+        $db = Database::connect();
+        $sql = 'DELETE FROM tbl_User_Access Where FK_AccessU_ID = ? AND Where FK_User_ID = ?;';
+        $stmt = $db->prepare($sql);
+        $stmt->execute(array($a_id, $u_id));
+        Database::disconnect();
+    }
 
     public function update()
     {
         $db = Database::connect();
-        $sql = 'UPDATE tbl_User_Access SET FK_User = ? WHERE FK_AccessU_ID = ?;';
+        $sql = 'UPDATE tbl_User_Access SET FK_User_ID = ? WHERE FK_AccessU_ID = ?;';
         $stmt = $db->prepare($sql);
         $stmt->execute(array($this->getAId(), $this->getUId()));
         Database::disconnect();
@@ -86,7 +96,7 @@ class UserAccess implements DatabaseObject, JsonSerializable
     public function save()
     {
         if ($this->validate()) {
-            if ($this->getAId() != null && $this->getAId() > 0) {
+            if ($this->getAId() != null && $this->getAId() > 0 && $this->getUId() != null && $this->getUId() > 0) {
                 $this->update();
                 return true;
             } else {
