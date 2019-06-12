@@ -41,13 +41,13 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
 
     public function validate()
     {
-        return $this->validateName("name", $this->getName()) &
-            $this->validateNote("note", $this->getNote()) &
-            $this->validateLocation("location", $this->getLocation()) &
-            $this->validateStreet("street", $this->getStreet()) &
-            $this->validateStreetNr("streetNr", $this->getStreetNr()) &
-            $this->validateDate("date", $this->getDate()) &
-            $this->validateTime("time", $this->getTime());
+        return $this->validateName($this->getName()) &
+            $this->validateNote($this->getNote()) &
+            $this->validateLocation($this->getLocation()) &
+            $this->validateStreet($this->getStreet()) &
+            $this->validateStreetNr($this->getStreetNr()) &
+            $this->validateDate($this->getDate()) &
+            $this->validateTime($this->getTime());
     }
 
     public function save()
@@ -60,139 +60,121 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
             }
             return true;
         }
-        return false;
+        else{
+            return false;
+        }
     }
 
     public function validateHelper($label, $value, $length)
     {
         if(strlen($value) > $length)
         {
-            $errors[$label] = $label.' darf die Zeichen von '.$length.' nicht überschreiten';
+            $this->setErrors("Ihr " . $label . ' darf die Zeichen von '.$length.' nicht überschreiten!', $label . "_maxlength");
             return false;
         }
-        if(strlen($value) == 0)
+        elseif(strlen($value) == "0")
         {
-            $errors[$label] = $label.' darf nicht leer sein';
-            var_dump($errors);
+            $this->setErrors("Das Feld: '" . $label . "' darf nicht leer sein!", $label . "_empty");
             return false;
         }
         return true;
     }
 
-    public function validateName($label, $value){
-        $reg = "#^[ öÖäÄüÜßa-zA-Z0-9_.,-/()+*><]*$#";
+    public function validateName($value){
+        $label = "ap_name";
+        $reg = "#^[öÖäÄüÜßa-zA-Z0-9_.,-\/()+*><]+( [öÖäÄüÜßa-zA-Z0-9_.,-\/()+*><]+)*$#";
         if (!preg_match($reg, $value)){
-            $errors[$label] = $label. " beinhaltet Sonderzeichen";
-            var_dump($errors);
+            $this->setErrors("Der Name des Arbeitspakets darf nicht leer sein oder Sonderzeichen beinhalten.", $label);
             return false;
         }
         else if (!$this->validateHelper($label, $value, 256)){
             return false;
         }
-        /*else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 256)){
-            return true;
-        }*/
-        else{
-            return true;
-        }
-    }
-    public function validateLocation($label, $value){
-        $reg = "#^[ öÖäÄüÜßa-zA-Z.,-]*$#";
-        if (!preg_match($reg, $value)){
-            $errors[$label] = $label. " beinhaltet Sonderzeichen";
-            var_dump($errors);
-            return false;
-        }
-        else if (!$this->validateHelper($label, $value, 256)){
-            return false;
-        }
-        /*else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 128)){
-            return true;
-        }*/
-        else{
-            return true;
-        }
-    }
-    public function validateNote($label, $value){
-        $reg = "#^[ öÖäÄüÜßa-zA-Z0-9_.,-/()+*><&!?\"]*$#";
-        if (!preg_match($reg, $value)){
-            $errors[$label] = $label. " beinhaltet Sonderzeichen";
-            var_dump($errors);
-            return false;
-        }
-        else if (!$this->validateHelper($label, $value, 256)){
-            return false;
-        }
-        /*else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 256)){
-            return true;
-        }*/
-        else{
-            return true;
-        }
-    }
-    public function validateStreet($label, $value){
-        $reg = "#^[ ßöÖäÄüÜßa-zA-Z]*$#";
-        if (!preg_match($reg, $value)){
-            $errors[$label] = $label. " beinhaltet Sonderzeichen";
-            var_dump($errors);
-            return false;
-        }
-        else if (!$this->validateHelper($label, $value, 256)){
-            return false;
-        }
-        /*else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 256)){
-            return true;
-        }*/
-        else{
-            return true;
-        }
-    }
-    public function validateStreetNr($label, $value){
-        $reg = "#^[a-z0-9,-]*$#";
-        if (!preg_match($reg, $value)){
-            $errors[$label] = $label. " beinhaltet Sonderzeichen";
-            var_dump($errors);
-            return false;
-        }
-        else if (!$this->validateHelper($label, $value, 256)){
-            return false;
-        }
-        /*else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 10)){
-            return true;
-        }*/
-        else{
-            return true;
-        }
-    }
-    public function validateDate($label, $value){
-        $reg = "#([12][0-9]{3}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]))#";
-        if (!preg_match($reg, $value)){
-            $errors[$label] = $label. " beinhaltet Sonderzeichen";
-            var_dump($errors);
-            return false;
-        }
-        else if (!$this->validateHelper($label, $value, 256)){
-            return false;
-        }
-        /*else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 10)){
-            return true;
-        }*/
         return true;
     }
-    public function validateTime($label, $value){
-        $reg = "#^(?:2[0-3]|[01][0-9]):[0-5][0-9]$#";
+    public function validateLocation($value){
+        $label = "ap_location";
+        $reg = "#^[öÖäÄüÜßa-zA-Z.,-]+( [öÖäÄüÜßa-zA-Z.,-]+)*$#";
         if (!preg_match($reg, $value)){
-            $errors[$label] = $label. " beinhaltet Sonderzeichen";
-            var_dump($errors);
+            $this->setErrors("Der Standort des Arbeitspakets darf nicht leer sein oder Sonderzeichen beinhalten.", $label);
             return false;
         }
         else if (!$this->validateHelper($label, $value, 256)){
             return false;
         }
-        /*else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 10)){
+        else{
             return true;
-        }*/
-        return true;
+        }
+    }
+    public function validateNote($value){
+        $label = "ap_note";
+        $reg = '#^[öÖäÄüÜßa-zA-Z0-9-_.,\/()+*><&!?\"€@]+( [öÖäÄüÜßa-zA-Z0-9-_.,\/()+*><&!?\"€@]+)*$#';
+        if (!preg_match($reg, $value)){
+            $this->setErrors("Notizen dürfen nicht leer sein oder Sonderzeichen beinhalten.", $label);
+            return false;
+        }
+        else if (!$this->validateHelper($label, $value, 256)){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    public function validateStreet($value){
+        $label = "ap_street";
+        $reg = '#^[ßöÖäÄüÜßa-zA-Z]+( [ ßöÖäÄüÜßa-zA-Z]+)*$#';
+        if (!preg_match($reg, $value)){
+            $this->setErrors("Der Straßenname darf nicht leer sein oder Sonderzeichen beinhalten", $label);
+            return false;
+        }
+        else if (!$this->validateHelper($label, $value, 256)){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    public function validateStreetNr($value){
+        $label = "ap_streetNr";
+        $reg = '#^[A-Za-z0-9.,-]+( [A-Za-z0-9.,-]+)*$#';
+        if (!preg_match($reg, $value)){
+            $this->setErrors("Die Hausnummer darf nicht leer sein oder Sonderzeichen beinhalten", $label);
+            return false;
+        }
+        else if (!$this->validateHelper($label, $value, 256)){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    public function validateDate($value){
+        $label = "ap_date";
+        $reg = '#([12][0-9]{3}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]))#';
+        if (!preg_match($reg, $value)){
+            $this->setErrors("Datum des Arbeitspakets darf nicht leer sein oder Sonderzeichen beinhalten", $label);
+            return false;
+        }
+        else if (!$this->validateHelper($label, $value, 256)){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    public function validateTime($value){
+        $label = "ap_time";
+        $reg = '#^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$#';
+        if (!preg_match($reg, $value)){
+            $this->setErrors("Das Zeitfeld darf nicht leer sein oder Sonderzeichenbeinhalten", $label);
+            return false;
+        }
+        else if (!$this->validateHelper($label, $value, 256)){
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 
     public function create()
@@ -427,9 +409,8 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
     /**
      * @param array $errors
      */
-    public function setErrors($errors)
-    {
-        $this->errors = $errors;
+    public function setErrors($errormsg, $label){
+        $this->errors[$label] = $errormsg;
     }
 
     /**
