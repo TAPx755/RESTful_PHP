@@ -39,9 +39,11 @@ class User implements DatabaseObject, JsonSerializable
     {
         if ($this->validate()) {
             if ($this->getId() != null && $this->getId() > 0) {
+                $this->hashPassword();
                 $this->update();
                 return true;
             } else {
+                $this->hashPassword();
                 $this->setId($this->create());
                 return true;
             }
