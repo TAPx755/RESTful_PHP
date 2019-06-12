@@ -19,23 +19,64 @@ class AccessController
 
     /**
      * AccessController constructor.
+     * @param $ap_id
      * @param $access
-     * @param $user
+     * @param $useraccess
+     * @param $users
      */
-    public function __construct($ap_id)
+    public function __construct($ap_id = null, $access = null, $useraccess = null, $users = null)
     {
+        $this->ap_id = $ap_id;
+        $this->access = $access;
+        $this->useraccess = $useraccess;
+        $this->users = $users;
+    }
+
+    public function handleUserRequest($user_id){
+            $this->users = User::get($user_id);
+            $this->useraccess = UserAccess::get(0, $this->users->getId());
+            $this->access = $this->parseUserAccessFromArray($this->getUseraccess());
+            $this->ap_id = $this->parseActivitypackageFromArray($this->getAccess());
+            return $this;
+    }
+    public function handleAktivitypackageRequest($ap_id){
         $this->ap_id = $ap_id;
         $this->access = AccessModel::getAccessFromApId($ap_id);
         $this->useraccess = UserAccess::get($this->access->getId());
         $this->users = $this->parseUserFromArray($this->useraccess);
+        return $this;
     }
 
-    public function parseUserFromArray($array){
+    private function parseUserFromArray($array){
         try{
             $data = [];
             foreach ($array as $usr){
                 $userId = $usr->getUId();
                 $data[] = User::get($userId);
+            }
+            return $data;
+        }catch (Exception $ex){
+            return null;
+        }
+    }
+    private function parseUserAccessFromArray($array){
+        try{
+            $data = [];
+            foreach ($array as $access){
+                $accessId = $access->getAId();
+                $data[] = AccessModel::get($accessId);
+            }
+            return $data;
+        }catch (Exception $ex){
+            return null;
+        }
+    }
+    private function parseActivitypackageFromArray($array){
+        try{
+            $data = [];
+            foreach ($array as $access_ap){
+                $apId = $access_ap->getApId();
+                $data[] = ActivityPackage::get($apId);
             }
             return $data;
         }catch (Exception $ex){
