@@ -146,7 +146,8 @@ class UserRESTController extends RESTController
             $user = new User(null,null,null,null,null, null);
 
             $user->setName($this->file['u_Name']);
-            $user->setPassword(password_hash($this->file['u_Password'], PASSWORD_BCRYPT));
+            $user->setPassword($this->file['u_Password']);
+            $user->hashPassword();
             $user->setEmail($this->file['u_Email']);
             $user->setPrivilege('Guest');
 

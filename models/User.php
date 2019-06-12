@@ -197,6 +197,13 @@ class User implements DatabaseObject, JsonSerializable
         Database::disconnect();
     }
 
+    //Password Hashing
+    public function hashPassword()
+    {
+        $this->password = password_hash($this->password, PASSWORD_BCRYPT);
+    }
+
+
     public function getAll()
     {
         $data = [];
