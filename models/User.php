@@ -277,8 +277,6 @@ class User implements DatabaseObject, JsonSerializable
     public function generateToken()
     {
         $token = array(
-            "username" => $this->getEmail(),
-            "password" => $this->getPassword(),
             "id" => $this->getId(),
             "privilege" => $this->getPrivilege()
         );
