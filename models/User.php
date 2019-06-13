@@ -39,44 +39,48 @@ class User implements DatabaseObject, JsonSerializable
     {
         if ($this->validate()) {
             if ($this->getId() != null && $this->getId() > 0) {
+                $this->hashPassword();
                 $this->update();
                 return true;
             } else {
+                $this->hashPassword();
                 $this->setId($this->create());
                 return true;
             }
         }
-        return false;
+        else{
+            return false;
+        }
+
     }
 
     public function validate()
     {
-        return $this->validateName("name", $this->getName())&
-                $this->validateEmail("email", $this->getEmail())&
-                $this->validatePassword("passwort", $this->getPassword());
+        return $this->validateName(trim($this->getName()))&
+                $this->validateEmail(trim($this->getEmail()))&
+                $this->validatePassword($this->getPassword());
     }
 
     public function validateHelper($label, $value, $length)
     {
         if(strlen($value) > $length)
         {
-            $errors[$label] = $label.' darf die Zeichen von '.$length.' nicht überschreiten';
+            $this->setErrors("Ihr " . $label . ' darf die Zeichen von '.$length.' nicht überschreiten!', $label . "_maxlength");
             return false;
         }
-        if(strlen($value) == 0)
+        elseif(strlen($value) == "0")
         {
-            $errors[$label] = $label.' darf nicht leer sein';
-            var_dump($errors);
+            $this->setErrors("Das Feld: '" . $label . "' darf nicht leer sein!", $label . "_empty");
             return false;
         }
         return true;
     }
 
-    public function validateName($label, $value){
-        $reg = "#^[A-Za-z.,-öÖäÄüÜß]+( [A-Za-z.,-öÖäÄüÜß]+)*$#";
+    public function validateName($value){
+        $label = "Benutzername";
+        $reg = "#^[öÖäÄüÜßa-zA-Z.,-]+( [öÖäÄüÜßa-zA-Z.,-]+)*$#";
         if (!preg_match($reg, $value)){
-            $errors[$label] = $label. " darf keine Sonderzeichen enthalten";
-            var_dump($errors);
+            $this->setErrors("Ihr Benutzername darf nicht leer sein oder keine Sonderzeichen beinhalten.", $label);
             return false;
         }
         else if (!$this->validateHelper($label, $value, 256)){
@@ -86,12 +90,14 @@ class User implements DatabaseObject, JsonSerializable
         else if (preg_match($reg, $value) & $this->validateHelper($label, $value, 256)){
             return true;
         }*/
-        else{
-            return true;
-        }
+
+        $this->setName($value);
+        return true;
+
     }
 
-    public function validatePassword($label, $value){
+    public function validatePassword($value){
+        /*
         if (strlen($value) <= "8") {
             $errors[$label] = "Dein Passwort muss mindestens 8 Zeichen lang sein!";
             var_dump($errors);
@@ -115,18 +121,49 @@ class User implements DatabaseObject, JsonSerializable
         else {
             return true;
         }
+        */
+        $counter = 0;
 
-    }
-
-    public function validateEmail($label, $value){
-        if(filter_var($value, FILTER_VALIDATE_EMAIL)){
-            return true;
+        if(!preg_match("#[a-z]+#",$value)) {
+            $this->setErrors("Dein Passwort darf nicht leer sein!", "Password_empty");
+            $counter++;
         }
-        else if (!$this->validateHelper($label, $value,256)){
+        if (strlen($value) < "8" & strlen($value) >= "1") {
+            $this->setErrors("Dein Passwort muss mindestens 8 Zeichen lang sein!", "Password_chars");
+            $counter++;
+        }
+        if(!preg_match("#[0-9]+#",$value)) {
+            $this->setErrors("Dein Passwort muss mindestens eine Zahl beinhalten!", "Password_number");
+            $counter++;
+        }
+        if(!preg_match("#[A-Z]+#",$value)) {
+            $this->setErrors("Dein Passwort muss mindestens einen Großbuchstaben beinhalten!", "Password_capital");
+            $counter++;
+        }
+        if(!preg_match("#[a-z]+#",$value)) {
+            $this->setErrors("Dein Passwort muss mindestens einen Kleinbuchstaben beinhalten!", "Password_lowercase");
+            $counter++;
+        }
+
+        if ($counter > 0){
             return false;
         }
         else{
-            $errors[$label] = $label. " ist keine gültige E-Mail Adresse";
+            return true;
+        }
+
+    }
+
+    public function validateEmail($value){
+        if(filter_var($value, FILTER_VALIDATE_EMAIL)){
+            $this->setEmail($value);
+            return true;
+        }
+        elseif (!$this->validateHelper("Email", $value,256)){
+            return false;
+        }
+        else{
+            $this->setErrors("Ihre eingabe ist keine gültige E-Mail Adresse", "Email_invalid");
             return false;
         }
 
@@ -161,6 +198,13 @@ class User implements DatabaseObject, JsonSerializable
         }
         Database::disconnect();
     }
+
+    //Password Hashing
+    public function hashPassword()
+    {
+        $this->password = password_hash($this->password, PASSWORD_BCRYPT);
+    }
+
 
     public function getAll()
     {
@@ -427,11 +471,9 @@ class User implements DatabaseObject, JsonSerializable
     /**
      * @param array $errors
      */
-    public function setErrors($errors)
-    {
-        $this->errors = $errors;
+    public function setErrors($errormsg, $label){
+        $this->errors[$label] = $errormsg;
     }
-
 
 
 }
