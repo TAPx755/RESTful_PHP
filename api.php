@@ -9,6 +9,7 @@ session_start();
 
 require_once 'controllers/ActivityPackRESTController.php';
 require_once 'controllers/UserRESTController.php';
+require_once 'controllers/AccessRESTController.php';
 
 // http://localhost/K1Passwordmanager2.0ANGABE/index.php?r=credentials/view$id=25
 
@@ -21,7 +22,6 @@ echo password_verify("hallo123", '$2y$10$ZEzf0r1qbWOi8bK7kTbPluCo20z4FfSY/UHn0m5
     {
         $controller = substr($controller, 0, strpos($controller,"/"));
     }
-
 if($controller == 'user')
 {
     try
@@ -43,6 +43,14 @@ else if($controller == 'activitypackage')
     catch(Exception $e)
     {
         header('HTTP/1.1 400'. $e->getMessage());
+        echo json_encode($e->getMessage());
+    }
+}
+else if($controller == 'access') {
+    try {
+        (new AccessRESTController())->handleRequest();
+    } catch (Exception $e) {
+        header('HTTP/1.1 400' . $e->getMessage());
         echo json_encode($e->getMessage());
     }
 }

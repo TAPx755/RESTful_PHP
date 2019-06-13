@@ -4,14 +4,15 @@ require "models/ActivityPackage.php";
 //include "models/Database.php";
 include "auth/JWTToken.php";
 
-require_once 'models/AccessMerge.php';
-$user = new AccessMerge();
-$user->handleUserRequest(2);
-print_r($user->jsonSerialize());
-echo "<br>";
-$user->handleAktivitypackageRequest(1);
-print_r($user->jsonSerialize());
-die();
+echo '<h1>Testfile run</h1>';
+//require_once 'models/AccessMerge.php';
+//$user = new AccessMerge();
+//$user->handleUserRequest(2);
+//print_r($user->jsonSerialize());
+//echo "<br>";
+//$user->handleAktivitypackageRequest(1);
+//print_r($user->jsonSerialize());
+//die();
 
     /*$token = array(
         "username" => 'pat@tsn.at',
