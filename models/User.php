@@ -198,6 +198,24 @@ class User implements DatabaseObject, JsonSerializable
         }
         Database::disconnect();
     }
+    public static function getOnlyIdAndName($id){
+        $db = Database::connect();
+        $sql = 'SELECT * FROM tbl_User WHERE u_ID=?';
+        $stmt = $db->prepare($sql);
+        $stmt->execute(array($id));
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if($user == null)
+        {
+            return null;
+        }
+        else
+        {
+            $tmpUser = new User($user['u_ID'], $user['u_Name'], null, null, null, null);
+            return $tmpUser;
+        }
+        Database::disconnect();
+    }
 
     //Password Hashing
     public function hashPassword()

@@ -7,6 +7,7 @@
  */
 
 require_once "models/UserAccess.php";
+require_once "models/AccessModel.php";
 require_once "RESTController.php";
 
 class AccessRESTController extends RESTController
@@ -18,7 +19,6 @@ class AccessRESTController extends RESTController
             $user->setToken($this->token);
             $id = $user->getIdFromToken();
             $privilege = $user->getPrivilegeFromToken();
-
             if ($id == false) {
                 $this->response("User not found", 401);
                 die();
@@ -80,9 +80,34 @@ class AccessRESTController extends RESTController
 
     public function handleGETRequest($user)
     {
-        if (sizeof($this->args) == 1 && $user->getPrivilege() != 'Guest') {
-            $model = UserAccess::get($this->args[0]);
-            $this->response($model);
+        if ($this->verb == 'user' && $user->getPrivilege() != 'Guest') {
+            //http://10.10.10.191/PHP_Storm/RESTful_PHP/api/access/user
+            $model = UserAccess::get(null, $user->getId());
+            $access = $model->getAId();
+            $accessmodel = [];
+            for ($i = 0; $i < count($access); $i++) {
+                $accessmodel[] = AccessModel::get((int)$access[$i]);
+            }
+            $aps = [];
+            for ($i = 0; $i < count($accessmodel); $i++) {
+                $aps[] = ActivityPackage::get((int)($accessmodel[$i])->getApId());
+            }
+            $this->response($aps);
+        } else if ($this->verb == 'activitypackage' && sizeof($this->args) == 1 && $user->getPrivilege() != 'Guest') {
+            //http://10.10.10.191/PHP_Storm/RESTful_PHP/api/access/activitypackage/6
+            $model = Activitypackage::get($this->args[0]);
+            if ($model->getFkOwner() == $user->getId()) {
+                $accessmodel = AccessModel::getAccessFromApId($model->getId());
+                $useraccess = UserAccess::get($accessmodel->getId());
+                $access = $useraccess->getUId();
+                $users = [];
+                for ($i = 0; $i < count($access); $i++) {
+                    $users[] = User::getOnlyIdAndName((int)$access[$i]);
+                }
+                $this->response(array_merge($model->jsonSerialize(), $users));
+            } else {
+                $this->response('Not Authorized', 401);
+            }
         } else {
             $this->response('Not Authorized', 401);
         }
