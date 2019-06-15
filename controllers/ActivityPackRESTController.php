@@ -50,6 +50,9 @@ class ActivityPackRESTController extends RESTController
             {
                 $this->response("Token invalid", 401);
             }
+        }else
+        {
+            $this->response("Token invalid", 401);
         }
     }
     public function handleGETRequest($user)

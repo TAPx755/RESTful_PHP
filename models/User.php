@@ -216,6 +216,32 @@ class User implements DatabaseObject, JsonSerializable
         }
         Database::disconnect();
     }
+    public static function getAllOnlyIdAndName()
+    {
+        $data = [];
+
+        $db = Database::connect();
+        $sql = 'SELECT * FROM tbl_User';
+        $stmt=$db->prepare($sql);
+        $stmt->execute();
+        $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        Database::disconnect();
+
+        if($users == null)
+        {
+            return null;
+        }
+        else
+        {
+            foreach ($users as $user)
+            {
+                $data[] = new User($user['u_ID'], $user['u_Name'],  null, null, null, null);
+            }
+        }
+
+        return $data;
+    }
+
 
     //Password Hashing
     public function hashPassword()
