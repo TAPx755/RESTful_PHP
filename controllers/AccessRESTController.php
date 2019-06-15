@@ -111,6 +111,14 @@ class AccessRESTController extends RESTController
         } else if ($this->verb == 'selectionuser' && $user->getPrivilege() != 'Guest') {
             $model = User::getAllOnlyIdAndName();
             $this->response($model, 200);
+        }else if ($this->verb == null && sizeof($this->args) == 1 && $user->getPrivilege() != 'Guest') {
+            $model = AccessModel::getAccessFromApId($this->args[0]);
+            $ap = Activitypackage::get($model->getId());
+            if ($ap->getFkOwner() == $user->getId()) {
+                $this->response($model, 200);
+            }else {
+                $this->response('Not Authorized', 401);
+            }
         }else {
             $this->response('Not Authorized', 401);
         }

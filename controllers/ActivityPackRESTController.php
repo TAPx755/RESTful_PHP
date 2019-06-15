@@ -124,8 +124,7 @@ class ActivityPackRESTController extends RESTController
             //$user = User::get($this->args[0]);
             $model = ActivityPackage::getAll($user);
             $this->response($model);
-        } else if (($this->verb = 'search' && sizeof($this->args) == 1) && $user->getPrivilige() != 'Guest') //ap/user/1/Pflastern
-        {
+        } else if (($this->verb = 'search' && sizeof($this->args) == 1) && $user->getPrivilige() != 'Guest'){ //ap/user/1/Pflastern
             //$user = User::get($this->args[0]);
             $model = ActivityPackage::getAll($user, $this->args[1]);
             $this->response($model);
