@@ -110,7 +110,7 @@ class AccessRESTController extends RESTController
             }
         } else if ($this->verb == 'selectionuser' && $user->getPrivilege() != 'Guest') {
             $model = User::getAllOnlyIdAndName();
-            $this->response($model);
+            $this->response($model, 200);
         }else {
             $this->response('Not Authorized', 401);
         }
