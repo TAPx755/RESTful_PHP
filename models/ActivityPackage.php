@@ -223,7 +223,7 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
                 $stmt->execute();
             }
             else{
-                $sql = 'SELECT DISTINCT ap_ID, ap_Name, ap_Location, ap_Street, ap_StreetNr, ap_Note, ap_Date, ap_Time, ap_Done, FK_OwnerUser_ID FROM tbl_Activitypackage LEFT join tbl_Access a on a.FK_Activitypackage_ID = tbl_Activitypackage.ap_ID LEFT join tbl_User_Access ua on ua.FK_AccessU_ID = a.a_ID Where tbl_Activitypackage.FK_OwnerUser_ID = 2 OR ua.FK_User_ID = 2 ORDER BY ap_Date DESC;';
+                $sql = 'SELECT DISTINCT ap_ID, ap_Name, ap_Location, ap_Street, ap_StreetNr, ap_Note, ap_Date, ap_Time, ap_Done, FK_OwnerUser_ID FROM tbl_Activitypackage LEFT join tbl_Access a on a.FK_Activitypackage_ID = tbl_Activitypackage.ap_ID LEFT join tbl_User_Access ua on ua.FK_AccessU_ID = a.a_ID Where tbl_Activitypackage.FK_OwnerUser_ID = ? OR ua.FK_User_ID = ? ORDER BY ap_Date DESC;';
                 $stmt = $db->prepare($sql);
                 $stmt->execute(array($user->getId(), $user->getId()));
             }
@@ -280,9 +280,9 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
     public function update()
     {
         $db = Database::connect();
-        $sql = 'UPDATE tbl_Activitypackage SET ap_Note=?, ap_Street=?, ap_StreetNr=?, ap_Date=?, ap_Time=?, FK_OwnerUser_ID=?, ap_Done=?, ap_Location=? WHERE ap_ID=?';
+        $sql = 'UPDATE tbl_Activitypackage SET ap_Name=?, ap_Note=?, ap_Street=?, ap_StreetNr=?, ap_Date=?, ap_Time=?, FK_OwnerUser_ID=?, ap_Done=?, ap_Location=? WHERE ap_ID=?;';
         $stmt = $db->prepare($sql);
-        $stmt->execute(array($this->note, $this->street, $this->streetNr, $this->date, $this->time, $this->fkOwner,$this->done,$this->location, $this->id));
+        $stmt->execute(array($this->name,$this->note, $this->street, $this->streetNr, $this->date, $this->time, $this->fkOwner,$this->done,$this->location, $this->id));
         Database::disconnect();
     }
 
