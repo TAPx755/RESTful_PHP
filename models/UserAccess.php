@@ -16,29 +16,15 @@ class UserAccess implements DatabaseObject, JsonSerializable
         $this->u_id = $u_id;
     }
 
-    public function getAll()
-    {
-        // TODO: Implement getAll() method.
-    }
-
-    public function jsonSerialize()
-    {
-        // TODO: Implement jsonSerialize() method.
-    }
-
-
-    // CRUD Operations
-
     public static function get($id, $user_id = null)
     {
         $data = [];
         $db = Database::connect();
-        if($user_id == null){
+        if ($user_id == null) {
             $sql = 'SELECT * FROM tbl_User_Access WHERE FK_AccessU_ID = ?;';
             $stmt = $db->prepare($sql);
             $stmt->execute(array($id));
-        }
-        else{
+        } else {
             $sql = 'SELECT * FROM tbl_User_Access WHERE FK_User_ID = ?;';
             $stmt = $db->prepare($sql);
             $stmt->execute(array($user_id));
@@ -47,12 +33,41 @@ class UserAccess implements DatabaseObject, JsonSerializable
         if ($objs == null) {
             return null;
         } else {
-            foreach ($objs as $obj) {
-                $data[] = new UserAccess($obj['FK_AccessU_ID'], $obj['FK_User_ID']);
+            if ($user_id != null) {
+                foreach ($objs as $obj) {
+                    $data[] = $obj['FK_AccessU_ID'];
+                }
+                return new UserAccess($data, $objs[0]['FK_User_ID']);
+            } else {
+                foreach ($objs as $obj) {
+                    $data[] = $obj['FK_User_ID'];
+                }
+                return new UserAccess($objs[0]['FK_AccessU_ID'], $data);
             }
         }
         Database::disconnect();
-        return $data;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            "FK_AccessU_ID" => $this->getAId(),
+            "FK_User_ID" => $this->getUId(),
+        ];
+    }
+
+
+    // CRUD Operations
+
+    public function getAll()
+    {
+        // Not Needed
+    }
+
+    public function update()
+    {
+        UserAccess::delete((int)$this->getAId());
+        $this->create();
     }
 
     static public function delete($id)
@@ -64,38 +79,23 @@ class UserAccess implements DatabaseObject, JsonSerializable
         Database::disconnect();
     }
 
-    public function update()
-    {
-        $db = Database::connect();
-        $sql = 'UPDATE tbl_User_Access SET FK_User = ? WHERE FK_AccessU_ID = ?;';
-        $stmt = $db->prepare($sql);
-        $stmt->execute(array($this->getAId(), $this->getUId()));
-        Database::disconnect();
-    }
-
     public function create()
     {
-        $db = Database::connect();
-        $sql = 'Insert INTO tbl_User_Access (FK_AccessU_ID, FK_User_ID) values (?,?);';
-        $stmt = $db->prepare($sql);
-        $stmt->execute(array($this->getAId(), $this->getUId()));
-        return $db->lastInsertId();
-        Database::disconnect();
+        $ary = $this->getUId();
+        for ($i = 0; $i < count($ary); $i++){
+            $db = Database::connect();
+            $sql = 'Insert INTO tbl_User_Access (FK_AccessU_ID, FK_User_ID) values (?,?);';
+            $stmt = $db->prepare($sql);
+            $stmt->execute(array($this->getAId(), $ary[$i]));
+            Database::disconnect();
+        }
     }
 
-    public function save()
+    public function validate()
     {
-        if ($this->validate()) {
-            if ($this->getAId() != null && $this->getAId() > 0) {
-                $this->update();
-                return true;
-            } else {
-                $this->setAId($this->create());
-                return true;
-            }
-        }
-        return false;
+        return true; //TODO Just numbers to validate
     }
+    // Getter & Setter
 
     /**
      * @return mixed
@@ -128,11 +128,7 @@ class UserAccess implements DatabaseObject, JsonSerializable
     {
         $this->u_id = $u_id;
     }
-    // Getter & Setter
-
-
 }
-
 
 ?>
 

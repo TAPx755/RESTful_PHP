@@ -29,7 +29,10 @@ class AccessModel implements DatabaseObject, JsonSerializable
 
     public function jsonSerialize()
     {
-        // TODO: Implement jsonSerialize() method.
+        return [
+            'a_ID' => $this->getId(),
+            'FK_Activitypackage_ID' => $this->getApId(),
+        ];
     }
 
 
