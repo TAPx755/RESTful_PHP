@@ -126,13 +126,22 @@ class AccessRESTController extends RESTController
 
     public function handlePOSTRequest($user)
     {
-        if ($user->getPrivilege() != 'Guest') {
+        if ($this->verb == null && $user->getPrivilege() != 'Guest') {
             $model = new UserAccess('', '');
             $model->setAId($this->file['FK_AccessU_ID']);
             $model->setUId($this->file['FK_User_ID']);
             if ($model->validate()) {
                 $model->create();
                 $this->response('OK', 201);
+            } else {
+                $this->response($model->getErrors(), 400);
+            }
+        }
+        if ($this->verb == 'generat' && $user->getPrivilege() != 'Guest') {
+            $model = new AccessModel('', '');
+            $model->setApId($this->file['FK_Activitypackage_ID']);
+            if ($model->save()) {
+                $this->response($model->getId(), 201);
             } else {
                 $this->response($model->getErrors(), 400);
             }

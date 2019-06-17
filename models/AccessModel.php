@@ -55,9 +55,9 @@ class AccessModel implements DatabaseObject, JsonSerializable
     public function create()
     {
         $db = Database::connect();
-        $sql = 'Insert INTO tbl_Access (a_ID, FK_Activitypackage_ID) values (?,?);';
+        $sql = 'Insert INTO tbl_Access (FK_Activitypackage_ID) values (?);';
         $stmt = $db->prepare($sql);
-        $stmt->execute(array($this->getId(), $this->getAp_Id()));
+        $stmt->execute(array($this->getApId()));
         return $db->lastInsertId();
         Database::disconnect();
     }
@@ -144,5 +144,9 @@ class AccessModel implements DatabaseObject, JsonSerializable
     public function setApId($ap_id)
     {
         $this->ap_id = $ap_id;
+    }
+    public function validate()
+    {
+        return true;
     }
 }
