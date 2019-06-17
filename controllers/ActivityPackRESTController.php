@@ -93,15 +93,20 @@ class ActivityPackRESTController extends RESTController
 
     }
 
-    public function handleDELETERequest()
+    public function handleDELETERequest($user)
     {
-        //WAIT FOR ACCESS
-        if ($this->verb == null && sizeof($this->args) == 1) {
-            ActivityPackage::delete($this->args[0]);
-            $this->response('OK', 200);
+        $model = ActivityPackage::get($this->args[0]);
+        if ($user->getId() == $model->getFkOwner()) {
+            if ($this->verb == null && sizeof($this->args) == 1) {
+                ActivityPackage::delete($this->args[0]);
+                $this->response('OK', 200);
 
-        } else {
-            $this->response('Not Found', 404);
+            } else {
+                $this->response('Not Found', 404);
+            }
+        }
+        else {
+            $this->response('Not Authorized', 401);
         }
     }
 
