@@ -12,10 +12,10 @@ class JWTToken
 {
     public static function validateToken($jwt)
     {
-        $public_key = file_get_contents('keys/public_key.key');
+        $private_key = file_get_contents('keys/private_key.key');
         try
         {
-            JWT::decode($jwt, $public_key, array('RS256'));
+            JWT::decode($jwt, $private_key, array('HS256'));
             return true;
         }
         catch(UnexpectedValueException $exception)
@@ -38,10 +38,10 @@ class JWTToken
 
     public static function parseToken($jwt)
     {
-        $public_key = file_get_contents('keys/public_key.key');
+        $private_key = file_get_contents('keys/private_key.key');
         try
         {
-            return JWT::decode($jwt, $public_key, array('RS256'));
+            return JWT::decode($jwt, $private_key, array('HS256'));
         }
         catch(UnexpectedValueException $exception)
         {
@@ -61,10 +61,10 @@ class JWTToken
         }
     }
 
-    public static function generateToken($token)
+    public static function generateToken($jwt)
     {
-        $secret_key = file_get_contents('keys/private_key.key');
+        $private_key = file_get_contents('keys/private_key.key');
 
-        return JWT::encode($token, $secret_key, 'RS256');
+        return JWT::encode($jwt, $private_key, 'HS256');
     }
 }

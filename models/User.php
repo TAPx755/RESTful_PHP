@@ -198,6 +198,7 @@ class User implements DatabaseObject, JsonSerializable
         }
         Database::disconnect();
     }
+
     public static function getOnlyIdAndName($id){
         $db = Database::connect();
         $sql = 'SELECT * FROM tbl_User WHERE u_ID=?';
