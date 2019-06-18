@@ -108,7 +108,7 @@ class AccessRESTController extends RESTController
         } else if ($this->verb == 'activitypackage' && sizeof($this->args) == 1 && $user->getPrivilege() != 'Guest') {
             //http://10.10.10.191/PHP_Storm/RESTful_PHP/api/access/activitypackage/6
             $model = Activitypackage::get($this->args[0]);
-            if ($model->getFkOwner() == $user->getId()) {
+            if ( $user->getPrivilege() == 'Admin' || $model->getFkOwner() == $user->getId()) {
                 $accessmodel = AccessModel::getAccessFromApId($model->getId());
                 $useraccess = UserAccess::get($accessmodel->getId());
                 $access = $useraccess->getUId();
