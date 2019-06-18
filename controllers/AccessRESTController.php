@@ -80,7 +80,7 @@ class AccessRESTController extends RESTController
 
     public function handleGETRequest($user)
     {
-        if ($this->verb == 'user' && $user->getPrivilege() != 'Guest') {
+        if ($this->verb == 'user' && $user->getPrivilege() != 'Guest' && sizeof($this->args) == 0) {
             //http://10.10.10.191/PHP_Storm/RESTful_PHP/api/access/user
             $model = UserAccess::get(null, $user->getId());
             $access = $model->getAId();
@@ -93,6 +93,18 @@ class AccessRESTController extends RESTController
                 $aps[] = ActivityPackage::get((int)($accessmodel[$i])->getApId());
             }
             $this->response($aps);
+        } else if ($this->verb == 'user' && $user->getPrivilege() == 'Admin' && sizeof($this->args) == 1) {
+            //http://10.10.10.191/PHP_Storm/RESTful_PHP/api/access/user/1
+            $tempuser = User::get($this->args[0]);
+            $model = ActivityPackage::getAll($tempuser);
+            $ary = [];
+            for($i = 0; $i < count($model); $i++){
+                $ap = $model[$i];
+                if($ap->getFkOwner() == $tempuser->getId()){
+                    $ary[] = ActivityPackage::get($ap->getId());
+                }
+            }
+            $this->response($ary, 200);
         } else if ($this->verb == 'activitypackage' && sizeof($this->args) == 1 && $user->getPrivilege() != 'Guest') {
             //http://10.10.10.191/PHP_Storm/RESTful_PHP/api/access/activitypackage/6
             $model = Activitypackage::get($this->args[0]);
