@@ -20,6 +20,7 @@ class ActivityPackRESTController extends RESTController
             $privilege = $user->getPrivilegeFromToken();
 
             if ($id == false) {
+
                 $this->response("User not found", 401);
                 die();
             }
@@ -27,6 +28,7 @@ class ActivityPackRESTController extends RESTController
                 $this->response("Privilege not found", 401);
                 die();
             }
+
 
             if ($user->validateToken()) {
                 switch ($this->method) {
@@ -120,19 +122,18 @@ class ActivityPackRESTController extends RESTController
     {
         if (sizeof($this->args) == 0 && $user->getPrivilege() == 'Admin') {
             $model = ActivityPackage::getAll();
-            $this->response($model);
-        } else if (sizeof($this->args) == 1 && ($user->getPrivilege() == 'Admin')) {
+            $this->response($model,200);
+        } else if ($this->verb != 'search' && sizeof($this->args) == 1 && ($user->getPrivilege() == 'Admin')) {
             $model = ActivityPackage::get($this->args[0]);
-            $this->response($model);
+            $this->response($model,200);
         } else if (sizeof($this->args) == 0 && $user->getPrivilege() != 'Guest') //ap/user/1
         {
             //$user = User::get($this->args[0]);
             $model = ActivityPackage::getAll($user);
-            $this->response($model);
-        } else if (($this->verb = 'search' && sizeof($this->args) == 1) && $user->getPrivilige() != 'Guest'){ //ap/user/1/Pflastern
-            //$user = User::get($this->args[0]);
-            $model = ActivityPackage::getAll($user, $this->args[1]);
-            $this->response($model);
+            $this->response($model, 200);
+        } else if (($this->verb = 'search' && sizeof($this->args) == 1) && $user->getPrivilege() != 'Guest'){ //ap/user/1/Pflastern
+            $model = ActivityPackage::getAll($user, $this->args[0]);
+            $this->response($model, 200);
         } else {
             $this->response('Not Authorized', 401);
         }
