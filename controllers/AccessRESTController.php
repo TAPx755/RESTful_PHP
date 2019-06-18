@@ -53,7 +53,7 @@ class AccessRESTController extends RESTController
 
     public function handlePUTRequest()
     {
-        if ($this->verb == null && sizeof($this->args) == 1) {
+        if ($this->verb == null && sizeof($this->args) == 1 && $user->getPrivilege() != 'Guest') {
             $model = UserAccess::get($this->args[0]);
             $model->setUId($this->file['FK_User_ID']);
             if ($model->validate()) {
@@ -70,7 +70,7 @@ class AccessRESTController extends RESTController
 
     public function handleDELETERequest()
     {
-        if ($this->verb == null && sizeof($this->args) == 1) {
+        if ($this->verb == null && sizeof($this->args) == 1 && $user->getPrivilege() != 'Guest') {
             UserAccess::delete($this->args[0]);
             $this->response('OK', 200);
         } else {
@@ -108,7 +108,7 @@ class AccessRESTController extends RESTController
         } else if ($this->verb == 'activitypackage' && sizeof($this->args) == 1 && $user->getPrivilege() != 'Guest') {
             //http://10.10.10.191/PHP_Storm/RESTful_PHP/api/access/activitypackage/6
             $model = Activitypackage::get($this->args[0]);
-            if ( $user->getPrivilege() == 'Admin' || $model->getFkOwner() == $user->getId()) {
+            if ($user->getPrivilege() == 'Admin' || $model->getFkOwner() == $user->getId()) {
                 $accessmodel = AccessModel::getAccessFromApId($model->getId());
                 $useraccess = UserAccess::get($accessmodel->getId());
                 $access = $useraccess->getUId();
@@ -123,15 +123,15 @@ class AccessRESTController extends RESTController
         } else if ($this->verb == 'selectionuser' && $user->getPrivilege() != 'Guest') {
             $model = User::getAllOnlyIdAndName();
             $this->response($model, 200);
-        }else if ($this->verb == null && sizeof($this->args) == 1 && $user->getPrivilege() != 'Guest') {
+        } else if ($this->verb == null && sizeof($this->args) == 1 && $user->getPrivilege() != 'Guest') {
             $model = AccessModel::getAccessFromApId($this->args[0]);
             $ap = Activitypackage::get($model->getApId());
-            if ($ap->getFkOwner() == $user->getId()) {
+            if ($user->getPrivilege() == 'Admin' || $ap->getFkOwner() == $user->getId()) {
                 $this->response($model, 200);
             }else {
                 $this->response('Not Authorized', 401);
             }
-        }else {
+        } else {
             $this->response('Not Authorized', 401);
         }
     }
