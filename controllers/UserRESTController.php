@@ -137,7 +137,7 @@ class UserRESTController extends RESTController
             }
             else
             {
-                $this->response("Not Found", 404);
+                $this->response("Not Found or Guest", 404);
             }
         }
         //For register process
