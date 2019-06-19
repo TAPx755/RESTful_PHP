@@ -122,7 +122,7 @@ class UserRESTController extends RESTController
             $foundUserDB = $loginUser->getUserFromEmail();
 
 
-            if($foundUserDB != null)
+            if($foundUserDB != null && $foundUserDB->getPrivilege() != 'Guest')
             {
                 if($loginUser->checkPassword($foundUserDB))
                 {
