@@ -175,6 +175,7 @@ class UserRESTController extends RESTController
            //$user->setPassword(password_hash($this->file['u_Password'], PASSWORD_BCRYPT));
            //$user->setEmail($this->file['u_Email']);
            $user->setPrivilege($this->file['u_Privilege']);
+           $user->setToken(null);
 
            if ($user->save()) {
                $this->response('OK', 200);
