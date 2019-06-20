@@ -69,6 +69,7 @@ class ActivityPackRESTController extends RESTController
                 $model->setStreetNr($this->file['ap_StreetNr']);
                 $model->setDate($this->file['ap_Date']);
                 $model->setTime($this->file['ap_Time']);
+                $model->setDone($this->file['ap_Done']);
 
                 if ($model->save()) {
                     $this->response('OK', 200);
