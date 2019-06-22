@@ -494,11 +494,7 @@ class User implements DatabaseObject, JsonSerializable
     {
         return [
           "u_ID" => $this->getId(),
-          "u_Name" => $this->getName(),
-          "u_Password" => $this->getPassword(),
-            "u_Token" => $this->getToken(),
-            "u_Email" => $this->getEmail(),
-            "u_Privilege" => $this->getPrivilege() //DELETE ANYTHING EXCEPT uID and Name!!!!
+          "u_Name" => $this->getName()
         ];
     }
 
