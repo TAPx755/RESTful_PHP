@@ -60,8 +60,6 @@ class UserRESTController extends RESTController
                 {
                     case 'PUT': $this->handlePUTRequest($user);
                         break;
-                    case 'DELETE': $this->handleDELETERequest($user);
-                        break;
                     case 'GET': $this->handleGETRequest($user);
                         break;
                     default : $this->response('Method not allowed', 405);

@@ -35,9 +35,6 @@ class ActivityPackRESTController extends RESTController
                     case 'PUT':
                         $this->handlePUTRequest($user);
                         break;
-                    case 'DELETE':
-                        $this->handleDELETERequest($user);
-                        break;
                     case 'GET':
                         $this->handleGETRequest($user);
                         break;
@@ -77,7 +74,7 @@ class ActivityPackRESTController extends RESTController
                     $this->response($model->getErrors(), 400);
                 }
             } else {
-                $this->response('Not Authorized', 401);
+                $this->response('Unauthorized', 401);
             }
 
         } else if ($this->verb == "done" && sizeof($this->args) == 1 && $user->getPrivilege() != 'Guest') {
@@ -94,23 +91,6 @@ class ActivityPackRESTController extends RESTController
             $this->response('Not Found', 404);
         }
 
-    }
-
-    public function handleDELETERequest($user)
-    {
-        $model = ActivityPackage::get($this->args[0]);
-        if ($user->getId() == $model->getFkOwner()) {
-            if ($this->verb == null && sizeof($this->args) == 1) {
-                ActivityPackage::delete($this->args[0]);
-                $this->response('OK', 200);
-
-            } else {
-                $this->response('Not Found', 404);
-            }
-        }
-        else {
-            $this->response('Not Authorized', 401);
-        }
     }
 
     /*
