@@ -96,18 +96,6 @@ class UserRESTController extends RESTController
             $this->response('Not Authorized', 401);
         }
     }
-    public function handleDELETERequest($user)
-    {
-        if(sizeof($this->args) == 1 && $user->getPrivilege() == 'Admin')
-        {
-            User::delete($this->args[0]);
-            $this->response('OK', 200);
-        }
-        else
-        {
-            $this->response('Not found', 404);
-        }
-    }
     public function handlePOSTRequest()
     {
         //For login process

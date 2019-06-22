@@ -22,6 +22,8 @@ echo password_verify("hallo123", '$2y$10$ZEzf0r1qbWOi8bK7kTbPluCo20z4FfSY/UHn0m5
     {
         $controller = substr($controller, 0, strpos($controller,"/"));
     }
+
+
 if($controller == 'user')
 {
     try
