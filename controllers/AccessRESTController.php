@@ -53,7 +53,7 @@ class AccessRESTController extends RESTController
 
     public function handlePUTRequest()
     {
-        if ($this->verb == null && sizeof($this->args) == 1 && $user->getPrivilege() != 'Guest') {
+        if ($this->verb == null && sizeof($this->args) == 1 && $user->getPrivilege() == 'Admin') {
             $model = UserAccess::get($this->args[0]);
             $model->setUId($this->file['FK_User_ID']);
             if ($model->validate()) {
@@ -66,6 +66,16 @@ class AccessRESTController extends RESTController
             $this->response('Not Found', 404);
         }
 
+    }
+
+    public function handleDELETERequest()
+    {
+        if ($this->verb == null && sizeof($this->args) == 1 && $user->getPrivilege() == 'Admin') {
+            UserAccess::delete($this->args[0]);
+            $this->response('OK', 200);
+        } else {
+            $this->response('Not Found', 404);
+        }
     }
 
     public function handleGETRequest($user)
