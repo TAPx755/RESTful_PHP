@@ -79,13 +79,9 @@ class ActivityPackRESTController extends RESTController
 
         } else if ($this->verb == "done" && sizeof($this->args) == 1 && $user->getPrivilege() != 'Guest') {
             $model = ActivityPackage::get($this->args[0]);
-            $model->setDone($this->file['ap_Done']);
+            $model->setDone(true);
 
-            if ($model->save()) {
-                $this->response('OK', 200);
-            } else {
-                $this->response($model->getErrors(), 400);
-            }
+            $model->update();
 
         } else {
             $this->response('Not Found', 404);
