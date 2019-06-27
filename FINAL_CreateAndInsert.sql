@@ -14,9 +14,9 @@
 
 
 
-Drop Database if exists dbGamper;
-Create DAtabase if not exists dbGamper;
-Use dbGamper;
+Drop Database if exists easyJob;
+Create DAtabase if not exists easyJob;
+Use easyJob;
 
 CREATE TABLE tbl_User (
 	u_ID int NOT NULL PRIMARY KEY AUTO_INCREMENT,
