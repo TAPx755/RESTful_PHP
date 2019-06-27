@@ -54,11 +54,10 @@ class ActivityPackRESTController extends RESTController
 
     public function handlePUTRequest($user)
     {
-        //WAIT FOR ACCESS
         if ($this->verb == null && sizeof($this->args) == 1 && $user->getPrivilege() != 'Guest') {
             $model = ActivityPackage::get($this->args[0]);
 
-            if ($user->getId() == $model->getFkOwner()) {
+            if ($user->getId() == $model->getFkOwner() || $user->getPrivilege() == 'Admin') {
                 $model->setNote($this->file['ap_Note']);
                 $model->setName($this->file['ap_Name']);
                 $model->setLocation($this->file['ap_Location']);
@@ -66,7 +65,7 @@ class ActivityPackRESTController extends RESTController
                 $model->setStreetNr($this->file['ap_StreetNr']);
                 $model->setDate($this->file['ap_Date']);
                 $model->setTime($this->file['ap_Time']);
-                $model->setDone($this->file['ap_Done']);
+                //$model->setDone($this->file['ap_Done']);
 
                 if ($model->save()) {
                     $this->response('OK', 200);
@@ -129,7 +128,7 @@ class ActivityPackRESTController extends RESTController
             $model->setDate($this->file['ap_Date']);
             $model->setTime($this->file['ap_Time']);
             $model->setFkOwner($user->getId());
-            $model->setDone($this->file['ap_Done']);
+            $model->setDone(0);
 
             if ($model->save()) {
                 $this->response($model->getId(), 201);
