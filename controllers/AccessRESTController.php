@@ -161,3 +161,4 @@ class AccessRESTController extends RESTController
     }
 
 }
+?>

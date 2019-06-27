@@ -1,5 +1,8 @@
 <?php
 session_start();
+
+error_reporting(E_ALL ^ E_WARNING);
+
 /**
  * Created by PhpStorm.
  * User: paddy.

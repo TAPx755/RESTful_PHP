@@ -14,9 +14,8 @@
 
 
 
-Drop Database if exists dbGamper;
-Create DAtabase if not exists dbGamper;
-Use dbGamper;
+
+Use usr_web24279952_1;
 
 CREATE TABLE tbl_User (
 	u_ID int NOT NULL PRIMARY KEY AUTO_INCREMENT,
