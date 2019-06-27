@@ -494,7 +494,8 @@ class User implements DatabaseObject, JsonSerializable
     {
         return [
           "u_ID" => $this->getId(),
-          "u_Name" => $this->getName()
+          "u_Name" => $this->getName(),
+            "u_Privilege" => $this->getPrivilege(),
         ];
     }
 
