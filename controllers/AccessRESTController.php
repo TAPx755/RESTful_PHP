@@ -51,7 +51,7 @@ class AccessRESTController extends RESTController
         }
     }
 
-    public function handlePUTRequest()
+    public function handlePUTRequest($user)
     {
         if ($this->verb == null && sizeof($this->args) == 1 && $user->getPrivilege() == 'Admin') {
             $model = UserAccess::get($this->args[0]);
@@ -68,7 +68,7 @@ class AccessRESTController extends RESTController
 
     }
 
-    public function handleDELETERequest()
+    public function handleDELETERequest($user)
     {
         if ($this->verb == null && sizeof($this->args) == 1 && $user->getPrivilege() == 'Admin') {
             UserAccess::delete($this->args[0]);
