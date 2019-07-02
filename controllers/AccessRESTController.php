@@ -14,6 +14,9 @@ class AccessRESTController extends RESTController
 {
     public function handleRequest()
     {
+
+
+
         if ($this->token != null) {
             $user = new User(null, null, null, null, null, null);
             $user->setToken($this->token);
@@ -45,7 +48,8 @@ class AccessRESTController extends RESTController
                     default :
                         $this->response('Method not allowed', 405);
                 }
-            } else {
+            }
+            else {
                 $this->response("Token invalid", 401);
             }
         }

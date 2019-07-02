@@ -49,9 +49,9 @@ abstract class RESTController
      */
     public function __construct()
     {
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: *");
-        header("Access-Control-Allow-Headers: *");
+        header("Access-Control-Allow-Origin: https://bock-martin.at");
+        header("Access-Control-Allow-Methods: GET, DELETE, UPDATE, PUT, OPTIONS");
+        header("Access-Control-Allow-Headers: Authorization");
         header("Content-Type: application/json");
 
         $this->args = isset($_GET['r']) ? explode('/', trim($_GET['r'], '/')) : [];

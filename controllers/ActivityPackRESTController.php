@@ -44,7 +44,8 @@ class ActivityPackRESTController extends RESTController
                     default :
                         $this->response('Method not allowed', 405);
                 }
-            } else {
+            }
+            else {
                 $this->response("Token invalid", 401);
             }
         } else {
