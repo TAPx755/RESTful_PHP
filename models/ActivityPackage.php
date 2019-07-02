@@ -238,13 +238,13 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
             }
             else {
                 if (preg_match_all('^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}^', $filter) == 1) {
-                    $sql = 'SELECT * FROM tbl_Activitypackage Inner join tbl_Access a on a.FK_Activitypackage_ID = tbl_Activitypackage.ap_ID Inner join tbl_User_Access ua on ua.FK_AccessU_ID = a.a_ID Where (FK_OwnerUser_ID = ? OR ua.FK_User_ID = ?) AND ap_Date LIKE ? ORDER BY ap_Date DESC';
+                    $sql = 'SELECT DISTINCT ap_ID, ap_Name, ap_Location, ap_Street, ap_StreetNr, ap_Note, ap_Date, ap_Time, ap_Done, FK_OwnerUser_ID FROM tbl_Activitypackage Inner join tbl_Access a on a.FK_Activitypackage_ID = tbl_Activitypackage.ap_ID Inner join tbl_User_Access ua on ua.FK_AccessU_ID = a.a_ID Where (FK_OwnerUser_ID = ? OR ua.FK_User_ID = ?) AND ap_Date LIKE ? ORDER BY ap_Date DESC';
                     $stmt = $db->prepare($sql);
                     $stmt->execute(array($user->getId(), $user->getId(), $filter));
                 }
                 else if (preg_match_all('^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}^', $filter) == 2)
                 {
-                    $sql = 'SELECT * FROM tbl_Activitypackage Inner join tbl_Access a on a.FK_Activitypackage_ID = tbl_Activitypackage.ap_ID Inner join tbl_User_Access ua on ua.FK_AccessU_ID = a.a_ID Where (FK_OwnerUser_ID = ? OR ua.FK_User_ID = ?) AND ap_Date BETWEEN ? AND ? ORDER BY ap_Date DESC';
+                    $sql = 'SELECT DISTINCT ap_ID, ap_Name, ap_Location, ap_Street, ap_StreetNr, ap_Note, ap_Date, ap_Time, ap_Done, FK_OwnerUser_ID FROM tbl_Activitypackage Inner join tbl_Access a on a.FK_Activitypackage_ID = tbl_Activitypackage.ap_ID Inner join tbl_User_Access ua on ua.FK_AccessU_ID = a.a_ID Where (FK_OwnerUser_ID = ? OR ua.FK_User_ID = ?) AND ap_Date BETWEEN ? AND ? ORDER BY ap_Date DESC';
                     $stmt = $db->prepare($sql);
                     $date1 = substr($filter, 0, strpos($filter, ","));
                     $date2 = substr($filter, strpos($filter,",")+1);
@@ -252,7 +252,7 @@ class ActivityPackage implements DatabaseObject, JsonSerializable
                 }
                 else
                 {
-                    $sql = 'SELECT * FROM tbl_Activitypackage Inner join tbl_Access a on a.FK_Activitypackage_ID = tbl_Activitypackage.ap_ID Inner join tbl_User_Access ua on ua.FK_AccessU_ID = a.a_ID Where (FK_OwnerUser_ID = ? OR ua.FK_User_ID = ?) AND (ap_Name LIKE ? OR ap_Note LIKE ? OR ap_Location LIKE ? OR ap_Street LIKE ?) ORDER BY ap_Date DESC';
+                    $sql = 'SELECT DISTINCT ap_ID, ap_Name, ap_Location, ap_Street, ap_StreetNr, ap_Note, ap_Date, ap_Time, ap_Done, FK_OwnerUser_ID FROM tbl_Activitypackage Inner join tbl_Access a on a.FK_Activitypackage_ID = tbl_Activitypackage.ap_ID Inner join tbl_User_Access ua on ua.FK_AccessU_ID = a.a_ID Where (FK_OwnerUser_ID = ? OR ua.FK_User_ID = ?) AND (ap_Name LIKE ? OR ap_Note LIKE ? OR ap_Location LIKE ? OR ap_Street LIKE ?) ORDER BY ap_Date DESC';
                     $stmt = $db->prepare($sql);
                     $stmt->execute(array($user->getId(), $user->getId(), '%'.$filter.'%', '%'.$filter.'%', '%'.$filter.'%', '%'.$filter.'%'));
                 }
